@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "494970091352",
+    "firebase_url": "https://messenger-e227c.firebaseio.com",
+    "project_id": "messenger-e227c",
+    "storage_bucket": "messenger-e227c.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:494970091352:android:ec6631483d9460a7",
+        "android_client_info": {
+          "package_name": "com.nanziq.messenger"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "494970091352-41apop7ftu1bd8hcaumm16tu9vtplate.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.nanziq.messenger",
+            "certificate_hash": "4b4eee499d0aad963295c1b91a6a5c7b6f2b97ba"
+          }
+        },
+        {
+          "client_id": "494970091352-llqn73flbrkt9cqb8k8sd7cv1e8gbjhc.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCeRbuqQiqsToCsOiR_ZnnpNF5wxjls6A8"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "494970091352-llqn73flbrkt9cqb8k8sd7cv1e8gbjhc.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
