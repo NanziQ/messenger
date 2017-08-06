@@ -23,9 +23,49 @@ public class Dialog {
     }
 
     public String getDateFormatted(){
-        SimpleDateFormat formatter = new SimpleDateFormat("dd.MM.yyyy HH.mm");
+        SimpleDateFormat formatter = new SimpleDateFormat("dd.MM\nHH.mm");
         String dateString = formatter.format(date);
         return dateString;
 
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public Date getDate() {
+        return date;
+    }
+
+    public String getImage() {
+        return image;
+    }
+
+    public String getText() {
+        return text;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setDate(Date date) {
+        this.date = date;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setText(String text) {
+        this.text = text;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
     }
 }
