@@ -1,5 +1,6 @@
 package com.nanziq.messenger;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -113,7 +114,7 @@ public class MessagesActivity extends AppCompatActivity
         } else if (id == R.id.nav_settings) {
 
         }else if (id == R.id.nav_exit) {
-
+            startActivity(new Intent(this, LoginActivity.class));
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
