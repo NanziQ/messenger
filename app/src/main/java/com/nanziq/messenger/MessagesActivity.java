@@ -18,6 +18,7 @@ import android.view.MenuItem;
 import android.widget.Toast;
 
 import com.nanziq.messenger.Adapters.DialogsAdapter;
+import com.nanziq.messenger.Model.Contact;
 import com.nanziq.messenger.Model.Dialog;
 
 import java.util.ArrayList;
@@ -110,7 +111,7 @@ public class MessagesActivity extends AppCompatActivity
         if (id == R.id.nav_messages) {
 
         } else if (id == R.id.nav_contacts) {
-
+            startActivity(new Intent(this, ContactsActivity.class));
         } else if (id == R.id.nav_settings) {
 
         }else if (id == R.id.nav_exit) {
