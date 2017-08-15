@@ -6,6 +6,9 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.widget.Toast;
 
+import com.firebase.ui.database.FirebaseRecyclerAdapter;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.nanziq.messenger.Adapters.ContactsAdapter;
 import com.nanziq.messenger.Model.Contact;
 
@@ -14,11 +17,28 @@ import java.util.List;
 
 public class ContactsActivity extends AppCompatActivity {
 
+
+    private DatabaseReference databaseReference;
+    private FirebaseRecyclerAdapter<Contact, ContactsAdapter.ViewHolder> firebaseRecyclerAdapter;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_contacts);
         RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
+
+        databaseReference = FirebaseDatabase.getInstance().getReference();
+        firebaseRecyclerAdapter =
+                new FirebaseRecyclerAdapter<Contact, ContactsAdapter.ViewHolder>(Contact.class,
+                R.layout.cardview_contacts,
+                        ContactsAdapter.ViewHolder.class,
+                        databaseReference.child("contacts")) {
+            @Override
+            protected void populateViewHolder(ContactsAdapter.ViewHolder viewHolder, Contact model, int position) {
+                viewHolder.binding.setContact(model);
+            }
+        };
+
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setHasFixedSize(true);
         List<Contact> contacts = new ArrayList<>();
@@ -31,6 +51,6 @@ public class ContactsActivity extends AppCompatActivity {
                 Toast.makeText(getApplicationContext(), "Открыть контакт " + position, Toast.LENGTH_SHORT).show();
             }
         });
-        recyclerView.setAdapter(adapter);
+        recyclerView.setAdapter(firebaseRecyclerAdapter);
     }
 }

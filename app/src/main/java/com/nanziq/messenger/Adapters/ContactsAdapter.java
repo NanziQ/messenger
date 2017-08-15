@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.bumptech.glide.Glide;
+import com.google.firebase.database.DatabaseReference;
 import com.nanziq.messenger.Model.Contact;
 import com.nanziq.messenger.Model.Dialog;
 import com.nanziq.messenger.R;
@@ -39,7 +40,7 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.ViewHo
 
     public static class ViewHolder extends RecyclerView.ViewHolder{
         public View mView;
-        CardviewContactsBinding binding;
+        public CardviewContactsBinding binding;
         public ViewHolder(View view){
             super(view);
             mView = view;

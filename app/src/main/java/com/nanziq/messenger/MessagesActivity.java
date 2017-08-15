@@ -127,7 +127,8 @@ public class MessagesActivity extends AppCompatActivity
         } else if (id == R.id.nav_settings) {
 
         }else if (id == R.id.nav_exit) {
-            startActivity(new Intent(this, LoginActivity.class));
+            firebaseAuth.signOut();
+            startActivity(new Intent(this, SignInActivity.class));
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);

@@ -116,11 +116,7 @@ public class SignInActivity extends AppCompatActivity {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
-                            // Sign in success, update UI with the signed-in user's information
-
-
-                            FirebaseUser user = task.getResult().getUser();
-                            // ...
+                           startActivity(new Intent(getApplicationContext(), MessagesActivity.class));
                         } else {
                             // Sign in failed, display a message and update the UI
 

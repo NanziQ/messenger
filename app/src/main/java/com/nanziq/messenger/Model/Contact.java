@@ -7,6 +7,11 @@ package com.nanziq.messenger.Model;
 public class Contact {
     public String name;
     public String image;
+
+    public Contact(){
+
+    }
+
     public Contact(String name, String image){
         this.name = name;
         this.image = image;
