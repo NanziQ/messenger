@@ -27,8 +27,14 @@
         </activity>
         <activity
             android:name=".LoginActivity"
-            android:label="@string/title_activity_login" />
-        <activity android:name=".ContactsActivity"></activity>
+            android:label="@string/title_activity_login"
+            android:windowSoftInputMode="stateAlwaysVisible" />
+        <activity android:name=".ContactsActivity" />
+        <activity android:name=".SignInActivity" />
+        <activity
+            android:name=".EnterCodeActivity"
+            android:label="@string/title_activity_enter_code"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 
 </manifest>

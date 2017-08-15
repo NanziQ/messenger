@@ -23,4 +23,8 @@
     <string name="permission_rationale">"Contacts permissions are needed for providing email
         completions."
     </string>
+    <string name="enterThePhoneNumber">Введите номер телефона:</string>
+    <string name="enter">Войти</string>
+    <string name="title_activity_enter_code">EnterCodeActivity</string>
+    <string name="code">Код</string>
 </resources>
