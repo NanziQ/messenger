@@ -28,15 +28,30 @@ import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.PhoneAuthCredential;
 import com.google.firebase.auth.PhoneAuthProvider;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+import com.nanziq.messenger.Model.Contact;
 
+import org.w3c.dom.Text;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 public class SignInActivity extends AppCompatActivity {
 
     private static final String ENTER_PHONE= "enter_phone";
     private static final String ENTER_CODE= "enter_code";
+    private static final String ENTER_NAME= "enter_name";
 
     private FirebaseAuth firebaseAuth;
+    private FirebaseUser firebaseUser;
+    private DatabaseReference databaseReference;
 
     private MaskedEditText phoneNumber;
     private Button button;
@@ -44,19 +59,44 @@ public class SignInActivity extends AppCompatActivity {
 
     private TextInputLayout inputCodeLayout;
     private TextInputEditText textCode;
+
+    private TextView labelEnterName;
+    private TextInputLayout inputNameLayout;
+    private TextInputEditText textName;
+
     private PhoneAuthProvider.OnVerificationStateChangedCallbacks callbacks;
     private String verificationId;
+
+    private List<String> collectionPhoneNumbers;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_in);
         firebaseAuth = FirebaseAuth.getInstance();
+        firebaseUser = firebaseAuth.getCurrentUser();
+        databaseReference = FirebaseDatabase.getInstance().getReference();
+
+        databaseReference.child("contacts").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                collectionPhoneNumbers = collectAllPhoneNumbers((Map<String, Object>) dataSnapshot.getValue());
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
         phoneNumber = (MaskedEditText) findViewById(R.id.phoneNumber);
         phoneNumber.setInputType(InputType.TYPE_CLASS_PHONE);
         textCode = (TextInputEditText) findViewById(R.id.code);
         button = (Button) findViewById(R.id.button);
         labelEnterPhone = (TextView) findViewById(R.id.labelEnterPhone);
         inputCodeLayout = (TextInputLayout) findViewById(R.id.inputCodeLayout);
+        labelEnterName = (TextView) findViewById(R.id.labelEnterName);
+        inputNameLayout = (TextInputLayout) findViewById(R.id.inputNameLayout);
+        textName = (TextInputEditText) findViewById(R.id.name);
         updateUI(ENTER_PHONE);
         callbacks = new PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
             @Override
@@ -93,6 +133,15 @@ public class SignInActivity extends AppCompatActivity {
                     startPhoneNumberAuth("+" + phoneNumber.getText(true).toString());
                 }
             });
+        } else if(tag == ENTER_NAME){
+            button.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Contact contact = new Contact(textName.getText().toString(), "+" + phoneNumber.getText(true).toString(), "", null);
+                    databaseReference.child("contacts").push().setValue(contact);
+                    startActivity(new Intent(getApplicationContext(), MessagesActivity.class));
+                }
+            });
         }
     }
 
@@ -116,7 +165,20 @@ public class SignInActivity extends AppCompatActivity {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
-                           startActivity(new Intent(getApplicationContext(), MessagesActivity.class));
+
+                            boolean check = false;
+                            for(String phone: collectionPhoneNumbers){
+                                if(phone.equals("+" + phoneNumber.getText(true).toString())){
+                                    check = true;
+                                    break;
+                                }
+                            }
+                            if(check) {
+                                startActivity(new Intent(getApplicationContext(), MessagesActivity.class));
+                            } else {
+                                updateUI(ENTER_NAME);
+                            }
+
                         } else {
                             // Sign in failed, display a message and update the UI
 
@@ -130,13 +192,17 @@ public class SignInActivity extends AppCompatActivity {
 
     private void updateUI(String s){
         if(s == ENTER_CODE){
+            disableViews(phoneNumber, labelEnterPhone, labelEnterName, inputNameLayout, textName);
             enableViews(inputCodeLayout, textCode, button);
-            disableViews(phoneNumber, labelEnterPhone);
             enableOnClickListener(ENTER_CODE);
         } else if(s == ENTER_PHONE){
-            disableViews(inputCodeLayout, textCode);
+            disableViews(inputCodeLayout, textCode, labelEnterName, inputNameLayout, textName);
             enableViews(phoneNumber, button, labelEnterPhone);
             enableOnClickListener(ENTER_PHONE);
+        } else if (s == ENTER_NAME){
+            disableViews(phoneNumber, labelEnterPhone, inputCodeLayout, textCode);
+            enableViews(labelEnterName, inputNameLayout, textName, button);
+            enableOnClickListener(ENTER_NAME);
         }
     }
 
@@ -152,5 +218,15 @@ public class SignInActivity extends AppCompatActivity {
             v.setEnabled(false);
             v.setVisibility(View.INVISIBLE);
         }
+    }
+
+    private List<String> collectAllPhoneNumbers(Map<String,Object> users){
+        ArrayList<String> phoneNumbers = new ArrayList<>();
+
+        for (Map.Entry<String, Object> entry : users.entrySet()){
+            Map singleUser = (Map) entry.getValue();
+            phoneNumbers.add((String) singleUser.get("phone"));
+        }
+        return phoneNumbers;
     }
 }

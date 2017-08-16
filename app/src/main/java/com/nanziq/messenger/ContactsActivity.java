@@ -6,6 +6,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
@@ -36,14 +37,18 @@ public class ContactsActivity extends AppCompatActivity {
             @Override
             protected void populateViewHolder(ContactsAdapter.ViewHolder viewHolder, Contact model, int position) {
                 viewHolder.binding.setContact(model);
+                Glide
+                        .with(getApplicationContext())
+                        .load(model.getImage())
+                        .into(viewHolder.binding.imageView);
             }
         };
 
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setHasFixedSize(true);
         List<Contact> contacts = new ArrayList<>();
-        contacts.add(new Contact("Бабуля", "http://st2-fashiony.ru/pic/clothing/pic/95436/42.jpg"));
-        contacts.add(new Contact("Дедуля", "http://jumabendery.narod.ru/images/ded.jpg"));
+        contacts.add(new Contact("Бабуля", "+796265444545", "http://st2-fashiony.ru/pic/clothing/pic/95436/42.jpg", null));
+        contacts.add(new Contact("Дедуля", "+796265447896", "http://jumabendery.narod.ru/images/ded.jpg", null));
         ContactsAdapter adapter = new ContactsAdapter(contacts, this);
         adapter.setListener(new ContactsAdapter.Listener() {
             @Override

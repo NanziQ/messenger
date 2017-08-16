@@ -11,6 +11,12 @@
         android:text="@string/enterThePhoneNumber"
         android:id="@+id/labelEnterPhone" />
 
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/enterName"
+        android:id="@+id/labelEnterName" />
+
     <com.github.reinaldoarrosi.maskededittext.MaskedEditText
         android:id="@+id/phoneNumber"
         android:layout_width="wrap_content"
@@ -35,6 +41,22 @@
             android:layout_height="wrap_content"
             android:hint="@string/code"
             android:inputType="phone"/>
+
+    </android.support.design.widget.TextInputLayout>
+
+    <android.support.design.widget.TextInputLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/labelEnterPhone"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:id="@+id/inputNameLayout">
+
+        <android.support.design.widget.TextInputEditText
+            android:id="@+id/name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/name"/>
 
     </android.support.design.widget.TextInputLayout>
     <Button

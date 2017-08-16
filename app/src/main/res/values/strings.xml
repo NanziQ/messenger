@@ -27,4 +27,6 @@
     <string name="enter">Войти</string>
     <string name="title_activity_enter_code">EnterCodeActivity</string>
     <string name="code">Код</string>
+    <string name="enterName">Введите имя:</string>
+    <string name="name">Имя</string>
 </resources>
