@@ -45,6 +45,21 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.ViewHo
             super(view);
             mView = view;
             binding = DataBindingUtil.bind(view);
+            view.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    clickListener.onItemClick(view, getAdapterPosition());
+                }
+            });
+        }
+        private ViewHolder.ClickListener clickListener;
+
+        public interface ClickListener{
+            public void onItemClick(View view, int position);
+        }
+
+        public void setOnClickListener(ViewHolder.ClickListener clickListener){
+            this.clickListener = clickListener;
         }
     }
     public ContactsAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {

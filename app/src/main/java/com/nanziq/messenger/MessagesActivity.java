@@ -76,7 +76,8 @@ public class MessagesActivity extends AppCompatActivity
         adapter.setListener(new DialogsAdapter.Listener() {
             @Override
             public void onClick(int position) {
-                Toast.makeText(getApplicationContext(),"Открытие диалога "+ position + "!",  Toast.LENGTH_SHORT).show();
+//                Toast.makeText(getApplicationContext(),"Открытие диалога "+ position + "!",  Toast.LENGTH_SHORT).show();
+                startActivity(new Intent(getApplicationContext(), DialogViewActivity.class));
             }
         });
         recyclerView.setAdapter(adapter);
