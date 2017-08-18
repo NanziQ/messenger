@@ -11,6 +11,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.nanziq.messenger.Adapters.DialogsAdapter;
 import com.nanziq.messenger.Model.Dialog;
+import com.nanziq.messenger.Model.Message;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -26,8 +27,12 @@ public class MainActivity extends AppCompatActivity {
         recyclerView.setHasFixedSize(true);
 
         List<Dialog> dialogList = new ArrayList<>();
-        dialogList.add(new Dialog("q1", "Брат", "https://img-fotki.yandex.ru/get/6836/13428093.31/0_c71e3_4748ecdf_orig", new Date(), "Hello"));
-        dialogList.add(new Dialog("q2", "Сестра", "https://cs5.pikabu.ru/post_img/2014/06/24/10/1403625164_800406127.jpg", new Date(), "Hello bro"));
+
+        List<Message> messageList = new ArrayList<>();
+        List<Long> contactList = new ArrayList<>();
+
+        dialogList.add(new Dialog("Брат", "https://img-fotki.yandex.ru/get/6836/13428093.31/0_c71e3_4748ecdf_orig", new Date(), "Hello", messageList, contactList));
+        dialogList.add(new Dialog( "Сестра", "https://cs5.pikabu.ru/post_img/2014/06/24/10/1403625164_800406127.jpg", new Date(), "Hello bro", messageList, contactList));
         DialogsAdapter adapter = new DialogsAdapter(dialogList, this);
         adapter.setListener(new DialogsAdapter.Listener() {
             @Override

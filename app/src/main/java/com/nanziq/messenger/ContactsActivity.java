@@ -14,8 +14,11 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.nanziq.messenger.Adapters.ContactsAdapter;
 import com.nanziq.messenger.Model.Contact;
+import com.nanziq.messenger.Model.Dialog;
+import com.nanziq.messenger.Model.Message;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class ContactsActivity extends AppCompatActivity {

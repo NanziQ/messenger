@@ -2,6 +2,7 @@ package com.nanziq.messenger.Model;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 
 /**
  * Created by Konstantin on 06.08.2017.
@@ -9,17 +10,25 @@ import java.util.Date;
 
 public class Dialog {
     public String name;
-    public String title;
     public String image;
     public Date date;
     public String text;
+    public List<Message> messages;
+    public List<Long> contacts;
+    public boolean solo;
 
-    public Dialog(String name, String title, String image, Date date, String text){
+    public Dialog(){
+
+    }
+
+    public Dialog(String name, String image, Date date, String text, List<Message> messages, List<Long> contacts, boolean solo){
         this.name = name;
-        this.title = title;
         this.image = image;
         this.date = date;
         this.text = text;
+        this.messages = messages;
+        this.contacts = contacts;
+        this.solo = solo;
     }
 
     public String getDateFormatted(){
@@ -45,10 +54,6 @@ public class Dialog {
         return text;
     }
 
-    public String getTitle() {
-        return title;
-    }
-
     public void setDate(Date date) {
         this.date = date;
     }
@@ -65,7 +70,20 @@ public class Dialog {
         this.text = text;
     }
 
-    public void setTitle(String title) {
-        this.title = title;
+    public List<Message> getMessages() {
+        return messages;
     }
+
+    public void setMessages(List<Message> messages) {
+        this.messages = messages;
+    }
+
+    public List<Long> getContacts() {
+        return contacts;
+    }
+
+    public void setContacts(List<Long> contacts) {
+        this.contacts = contacts;
+    }
+
 }
