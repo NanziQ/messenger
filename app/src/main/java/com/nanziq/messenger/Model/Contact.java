@@ -7,6 +7,7 @@ import java.util.List;
  */
 
 public class Contact {
+    public String uid;
     public String name;
     public String phone;
     public String image;
@@ -16,7 +17,8 @@ public class Contact {
 
     }
 
-    public Contact(String name, String phone,  String image, List<Long> dialogs){
+    public Contact(String uid, String name, String phone,  String image, List<Long> dialogs){
+        this.uid = uid;
         this.name = name;
         this.phone = phone;
         this.image = image;

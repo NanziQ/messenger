@@ -10,9 +10,13 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.nanziq.messenger.Adapters.ContactsAdapter;
+import com.nanziq.messenger.Firebase.ContactFB;
+import com.nanziq.messenger.Firebase.DialogFB;
 import com.nanziq.messenger.Model.Contact;
 import com.nanziq.messenger.Model.Dialog;
 import com.nanziq.messenger.Model.Message;
@@ -26,12 +30,21 @@ public class ContactsActivity extends AppCompatActivity {
 
     private DatabaseReference databaseReference;
     private FirebaseRecyclerAdapter<Contact, ContactsAdapter.ViewHolder> firebaseRecyclerAdapter;
+    private DialogFB dialogFB;
+    private ContactFB contactFB;
+    private FirebaseAuth firebaseAuth;
+    private FirebaseUser firebaseUser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_contacts);
         RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
+
+        dialogFB = DialogFB.getInstance();
+        contactFB = ContactFB.getInstance();
+        firebaseAuth = FirebaseAuth.getInstance();
+        firebaseUser = firebaseAuth.getCurrentUser();
 
         databaseReference = FirebaseDatabase.getInstance().getReference();
         firebaseRecyclerAdapter =
@@ -54,7 +67,8 @@ public class ContactsActivity extends AppCompatActivity {
                         viewHolder.setOnClickListener(new ContactsAdapter.ViewHolder.ClickListener() {
                             @Override
                             public void onItemClick(View view, int position) {
-
+                                List<Dialog> currentUserDialogList = dialogFB.getContactDialogList(firebaseUser.getUid());
+                                List<Dialog> friendDialogList = dialogFB.getContactDialogList(contactFB.getContactUid(position));
                             }
                         });
                         return viewHolder;

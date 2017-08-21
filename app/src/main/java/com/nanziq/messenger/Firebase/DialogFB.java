@@ -20,14 +20,14 @@ import java.util.Map;
 public class DialogFB {
     private static DialogFB instance;
     private DatabaseReference databaseReference;
-    private List<Dialog> dialogList;
+    private Map<String, Object> dialogMap;
 
     private DialogFB (){
         databaseReference = FirebaseDatabase.getInstance().getReference();
         databaseReference.child("dialogs").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                dialogList = (List<Dialog>) dataSnapshot.getValue();
+                dialogMap =  (Map<String, Object>) dataSnapshot.getValue();
             }
 
             @Override
@@ -48,10 +48,59 @@ public class DialogFB {
         Dialog dialog = new Dialog(name, image, date, text, messages, contacts, solo);
         databaseReference.child("dialogs").push().setValue(dialog);
     }
-    public List<Dialog> getDialogList(String id){
-        List<Dialog> dialogList = new ArrayList<>();
+    public List<Dialog> getContactDialogList(String id){
+        List<Dialog> contactDialogList = new ArrayList<>();
+        for (Map.Entry<String, Object> entry : dialogMap.entrySet()){
+            Map dialog = (Map) entry.getValue();
+            Map<String, Object> idList = (Map<String, Object>) dialog.get("contacts");
+            for (Map.Entry<String, Object> idContact : idList.entrySet()){
+                Map value = (Map) idContact.getValue();
+                String idValue = value.get("id").toString();
+                if(idValue.equals(id)){
+                    contactDialogList.add(convertMapToDialog(dialog));
+                    break;
+                }
+            }
+        }
+        return contactDialogList;
+    }
 
-        return dialogList;
+    private Dialog convertMapToDialog(Map map){
+        Dialog dialog = new Dialog();
+        dialog.setName((String) map.get("name"));
+        dialog.setImage((String) map.get("image"));
+        dialog.setContacts((List<Long>) convertMapToList(map, "contacts"));
+        dialog.setDate((Date) map.get("date"));
+        dialog.setMessages((List<Message>) convertMapToMessageList(map));
+        dialog.setText((String) map.get("text"));
+        return dialog;
+    }
+
+    private Message convertMapToMessage(Map map){
+        Message message = new Message();
+        message.setText((String) map.get("text"));
+        message.setName((String) map.get("name"));
+        return message;
+    }
+
+    private List convertMapToMessageList(Map map){
+        List list = new ArrayList();
+        Map<String, Object> convertable = (Map<String, Object>) map.get("messages");
+        for (Map.Entry<String, Object> item : convertable.entrySet()){
+            Map value = (Map) item.getValue();
+            list.add(convertMapToMessage(value));
+        }
+        return list;
+    }
+
+    private List convertMapToList(Map map, String key){
+        List list = new ArrayList();
+        Map<String, Object> convertable = (Map<String, Object>) map.get(key);
+        for (Map.Entry<String, Object> item : convertable.entrySet()){
+            Map value = (Map) item.getValue();
+            list.add(value);
+        }
+        return list;
     }
 //    private List<Dialog> collectAllDialogs(Map<Dialog,Object> users){
 //        ArrayList<Dialog> phoneNumbers = new ArrayList<>();
