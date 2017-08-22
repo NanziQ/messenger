@@ -11,39 +11,26 @@ import java.util.List;
 public class Dialog {
     public String name;
     public String image;
-    public Date date;
     public String text;
     public List<Message> messages;
-    public List<Long> contacts;
+    public List<String> contacts;
     public boolean solo;
 
     public Dialog(){
 
     }
 
-    public Dialog(String name, String image, Date date, String text, List<Message> messages, List<Long> contacts, boolean solo){
+    public Dialog(String name, String image, String text, List<Message> messages, List<String> contacts, boolean solo){
         this.name = name;
         this.image = image;
-        this.date = date;
         this.text = text;
         this.messages = messages;
         this.contacts = contacts;
         this.solo = solo;
     }
 
-    public String getDateFormatted(){
-        SimpleDateFormat formatter = new SimpleDateFormat("dd.MM\nHH.mm");
-        String dateString = formatter.format(date);
-        return dateString;
-
-    }
-
     public String getName() {
         return name;
-    }
-
-    public Date getDate() {
-        return date;
     }
 
     public String getImage() {
@@ -52,10 +39,6 @@ public class Dialog {
 
     public String getText() {
         return text;
-    }
-
-    public void setDate(Date date) {
-        this.date = date;
     }
 
     public void setImage(String image) {
@@ -78,12 +61,20 @@ public class Dialog {
         this.messages = messages;
     }
 
-    public List<Long> getContacts() {
+    public List<String> getContacts() {
         return contacts;
     }
 
-    public void setContacts(List<Long> contacts) {
+    public void setContacts(List<String> contacts) {
         this.contacts = contacts;
+    }
+
+    public boolean getSolo() {
+        return solo;
+    }
+
+    public void setSolo(boolean solo){
+        this.solo = solo;
     }
 
 }

@@ -67,8 +67,24 @@ public class ContactsActivity extends AppCompatActivity {
                         viewHolder.setOnClickListener(new ContactsAdapter.ViewHolder.ClickListener() {
                             @Override
                             public void onItemClick(View view, int position) {
-                                List<Dialog> currentUserDialogList = dialogFB.getContactDialogList(firebaseUser.getUid());
-                                List<Dialog> friendDialogList = dialogFB.getContactDialogList(contactFB.getContactUid(position));
+                                List<Dialog> currentUserSoloDialogList = dialogFB.getSoloContactDialogList(firebaseUser.getUid());
+//                                List<Dialog> friendSoloDialogList = dialogFB.getSoloContactDialogList(contactFB.getContactUid(position));
+
+                                String friendUid = contactFB.getContactUid(firebaseRecyclerAdapter.getRef(position).getKey());
+
+                                for (Dialog item: currentUserSoloDialogList){
+                                    List<String> contacts = item.getContacts();
+                                    for (String id: contacts){
+                                        if (friendUid.equals(id)){
+                                            //open dialog
+                                        }
+                                    }
+                                }
+
+                                List<String> contactsId = new ArrayList<>();
+                                contactsId.add(firebaseUser.getUid());
+                                contactsId.add(friendUid);
+                                dialogFB.createNewDialog("Dialog", null,null,null, contactsId, true);
                             }
                         });
                         return viewHolder;
