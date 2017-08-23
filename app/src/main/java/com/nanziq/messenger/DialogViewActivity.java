@@ -26,6 +26,7 @@ public class DialogViewActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dialog_view);
+        dialogId = getIntent().getStringExtra("dialogId");
         recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
 
         databaseReference = FirebaseDatabase.getInstance().getReference();

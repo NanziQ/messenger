@@ -17,6 +17,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.github.reinaldoarrosi.maskededittext.MaskedEditText;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -106,7 +107,7 @@ public class SignInActivity extends AppCompatActivity {
 
             @Override
             public void onVerificationFailed(FirebaseException e) {
-
+                Toast.makeText(getApplicationContext(), "Ошибка верификации", Toast.LENGTH_SHORT);
             }
 
             @Override
@@ -185,6 +186,7 @@ public class SignInActivity extends AppCompatActivity {
 
                             if (task.getException() instanceof FirebaseAuthInvalidCredentialsException) {
                                 // The verification code entered was invalid
+                                Toast.makeText(getApplicationContext(), "Неверный код", Toast.LENGTH_SHORT);
                             }
                         }
                     }

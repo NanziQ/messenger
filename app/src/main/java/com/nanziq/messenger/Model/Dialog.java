@@ -9,6 +9,7 @@ import java.util.List;
  */
 
 public class Dialog {
+    public String id;
     public String name;
     public String image;
     public String text;
@@ -77,4 +78,11 @@ public class Dialog {
         this.solo = solo;
     }
 
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
 }

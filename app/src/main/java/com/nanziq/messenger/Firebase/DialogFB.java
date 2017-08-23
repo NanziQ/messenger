@@ -60,7 +60,7 @@ public class DialogFB {
 //                Map value = (Map) idContact.getValue();
 //                String idValue = value.get("id").toString();
                 if(idContact.equals(id)){
-                    contactDialogList.add(convertMapToDialog(dialog));
+                    contactDialogList.add(convertMapToDialog(dialog, entry.getKey()));
                     break;
                 }
             }
@@ -78,13 +78,15 @@ public class DialogFB {
         return newDialogList;
     }
 
-    private Dialog convertMapToDialog(Map map){
+    private Dialog convertMapToDialog(Map map, String key){
         Dialog dialog = new Dialog();
+        dialog.setId(key);
         dialog.setName((String) map.get("name"));
         dialog.setImage((String) map.get("image"));
         dialog.setContacts((List<String>) map.get("contacts"));
         dialog.setMessages((List<Message>) convertMapToMessageList(map));
         dialog.setText((String) map.get("text"));
+        dialog.setSolo((boolean) map.get("solo"));
         return dialog;
     }
 
