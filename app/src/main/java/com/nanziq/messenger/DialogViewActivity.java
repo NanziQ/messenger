@@ -6,14 +6,20 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.nanziq.messenger.Adapters.ContactsAdapter;
 import com.nanziq.messenger.Adapters.MessageViewHolder;
+import com.nanziq.messenger.Firebase.ContactFB;
+import com.nanziq.messenger.Firebase.MessageFB;
 import com.nanziq.messenger.Model.Contact;
 import com.nanziq.messenger.Model.Message;
 
@@ -22,12 +28,24 @@ public class DialogViewActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
     private DatabaseReference databaseReference;
     private FirebaseRecyclerAdapter<Message, MessageViewHolder> firebaseRecyclerAdapter;
+    private FirebaseAuth firebaseAuth;
+    private FirebaseUser firebaseUser;
+    private MessageFB messageFB;
+    private ContactFB contactFB;
+    private EditText enterText;
+    private Button buttonSend;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dialog_view);
         dialogId = getIntent().getStringExtra("dialogId");
         recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
+        enterText = (EditText) findViewById(R.id.enterText);
+        buttonSend = (Button) findViewById(R.id.buttonSend);
+        messageFB = MessageFB.getInstance();
+        contactFB = ContactFB.getInstance();
+        firebaseAuth = FirebaseAuth.getInstance();
+        firebaseUser = firebaseAuth.getCurrentUser();
 
         databaseReference = FirebaseDatabase.getInstance().getReference();
         firebaseRecyclerAdapter =
@@ -55,5 +73,13 @@ public class DialogViewActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setHasFixedSize(true);
         recyclerView.setAdapter(firebaseRecyclerAdapter);
+
+        buttonSend.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                messageFB.sendMessage(dialogId, contactFB.getContactNameFromUid(firebaseUser.getUid()), enterText.getText().toString());
+                enterText.setText("");
+            }
+        });
     }
 }

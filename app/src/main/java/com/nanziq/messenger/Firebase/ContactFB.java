@@ -61,9 +61,24 @@ public class ContactFB {
         for (Map.Entry<String, Object> entry: contactMap.entrySet()){
             if (entry.getKey().equals(key)){
                 Map contact = (Map) entry.getValue();
-                String uid = contact.get("name").toString();
-                if (uid != null) {
-                    return uid;
+                String name = contact.get("name").toString();
+                if (name != null) {
+                    return name;
+                }else {
+                    return null;
+                }
+            }
+        }
+        return null;
+    }
+
+    public String getContactNameFromUid(String key){
+        for (Map.Entry<String, Object> entry: contactMap.entrySet()){
+            Map contact = (Map) entry.getValue();
+            if (contact.get("uid").equals(key)){
+                String name = contact.get("name").toString();
+                if (name != null) {
+                    return name;
                 }else {
                     return null;
                 }
