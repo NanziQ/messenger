@@ -2,6 +2,7 @@ package com.nanziq.messenger;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.widget.LinearLayoutManager;
@@ -17,21 +18,37 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.nanziq.messenger.Adapters.ContactsAdapter;
 import com.nanziq.messenger.Adapters.DialogsAdapter;
+import com.nanziq.messenger.Firebase.ContactFB;
+import com.nanziq.messenger.Firebase.DialogFB;
 import com.nanziq.messenger.Model.Contact;
 import com.nanziq.messenger.Model.Dialog;
+import com.nanziq.messenger.Model.DialogView;
 import com.nanziq.messenger.Model.Message;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
+import java.util.ListIterator;
 
 public class MessagesActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
     private FirebaseAuth firebaseAuth;
     private FirebaseUser firebaseUser;
+    private ContactFB contactFB;
+    private DialogFB dialogFB;
+    private FirebaseRecyclerAdapter<DialogView, DialogsAdapter.ViewHolder> firebaseRecyclerAdapter;
+    private DatabaseReference databaseReference;
+    private Query recyclerQuery;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,6 +56,10 @@ public class MessagesActivity extends AppCompatActivity
         setContentView(R.layout.activity_messages);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        contactFB = ContactFB.getInstance();
+        dialogFB = DialogFB.getInstance();
+        databaseReference = FirebaseDatabase.getInstance().getReference();
+
 
         firebaseAuth = FirebaseAuth.getInstance();
         firebaseUser = firebaseAuth.getCurrentUser();
@@ -47,6 +68,24 @@ public class MessagesActivity extends AppCompatActivity
             finish();
             return;
         }
+        recyclerQuery = databaseReference.child("dailogs").orderByChild("contacts").equalTo(firebaseUser.getUid());
+        firebaseRecyclerAdapter = new FirebaseRecyclerAdapter<DialogView, DialogsAdapter.ViewHolder>(DialogView.class,
+                R.layout.cardview_dialogs,
+                DialogsAdapter.ViewHolder.class,
+                recyclerQuery) {
+            @Override
+            protected void populateViewHolder(DialogsAdapter.ViewHolder viewHolder, DialogView model, int position) {
+                viewHolder.binding.setDialog(model);
+                viewHolder.setListener(new DialogsAdapter.ViewHolder.Listener() {
+                    @Override
+                    public void onClick(View view, int position) {
+                        Intent intent = new Intent(getApplicationContext(), DialogViewActivity.class);
+                        intent.putExtra("dialogId", firebaseRecyclerAdapter.getRef(position).getKey());
+                        startActivity(intent);
+                    }
+                });
+            }
+        };
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -69,23 +108,14 @@ public class MessagesActivity extends AppCompatActivity
         RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setHasFixedSize(true);
-
-        List<Dialog> dialogList = new ArrayList<>();
-
-        List<Message> messageList = new ArrayList<>();
-        List<Long> contactList = new ArrayList<>();
-
-//        dialogList.add(new Dialog("Брат", "https://img-fotki.yandex.ru/get/6836/13428093.31/0_c71e3_4748ecdf_orig", new Date(), "Hello", messageList, contactList));
-//        dialogList.add(new Dialog( "Сестра", "https://cs5.pikabu.ru/post_img/2014/06/24/10/1403625164_800406127.jpg", new Date(), "Hello bro", messageList, contactList));
-        DialogsAdapter adapter = new DialogsAdapter(dialogList, this);
-        adapter.setListener(new DialogsAdapter.Listener() {
-            @Override
-            public void onClick(int position) {
-//                Toast.makeText(getApplicationContext(),"Открытие диалога "+ position + "!",  Toast.LENGTH_SHORT).show();
-                startActivity(new Intent(getApplicationContext(), DialogViewActivity.class));
-            }
-        });
-        recyclerView.setAdapter(adapter);
+//        adapter.setListener(new DialogsAdapter.Listener() {
+//            @Override
+//            public void onClick(int position) {
+////                Toast.makeText(getApplicationContext(),"Открытие диалога "+ position + "!",  Toast.LENGTH_SHORT).show();
+//                startActivity(new Intent(getApplicationContext(), DialogViewActivity.class));
+//            }
+//        });
+        recyclerView.setAdapter(firebaseRecyclerAdapter);
     }
 
     @Override

@@ -10,6 +10,7 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.nanziq.messenger.Model.Dialog;
+import com.nanziq.messenger.Model.DialogView;
 import com.nanziq.messenger.R;
 import com.nanziq.messenger.databinding.CardviewDialogsBinding;
 
@@ -21,11 +22,11 @@ import java.util.List;
 
 public class DialogsAdapter extends RecyclerView.Adapter<DialogsAdapter.ViewHolder> {
 
-    List<Dialog> dialogList;
+    List<DialogView> dialogList;
     Context context;
     private DialogsAdapter.Listener listener;
 
-    public DialogsAdapter(List<Dialog> dialogList, Context context){
+    public DialogsAdapter(List<DialogView> dialogList, Context context){
         this.dialogList = dialogList;
         this.context = context;
     }
@@ -39,11 +40,27 @@ public class DialogsAdapter extends RecyclerView.Adapter<DialogsAdapter.ViewHold
 
     public static class ViewHolder extends RecyclerView.ViewHolder{
         public View mView;
-        CardviewDialogsBinding binding;
+        public CardviewDialogsBinding binding;
+        private ViewHolder.Listener listener;
         public ViewHolder(View view){
             super(view);
             mView = view;
             binding = DataBindingUtil.bind(view);
+            view.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    listener.onClick(view, getAdapterPosition());
+                }
+            });
+        }
+
+
+        public static interface Listener{
+            public void onClick(View view, int position);
+        }
+
+        public void setListener(ViewHolder.Listener listener){
+            this.listener = listener;
         }
 
     }
@@ -55,7 +72,7 @@ public class DialogsAdapter extends RecyclerView.Adapter<DialogsAdapter.ViewHold
 
     @Override
     public void onBindViewHolder(DialogsAdapter.ViewHolder holder, final int position) {
-        Dialog dialog = dialogList.get(position);
+        DialogView dialog = dialogList.get(position);
         holder.binding.setDialog(dialog);
         holder.binding.executePendingBindings();
         Glide

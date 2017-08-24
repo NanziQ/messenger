@@ -5,6 +5,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.nanziq.messenger.Interfaces.OnGetDataListener;
 import com.nanziq.messenger.Model.Dialog;
 import com.nanziq.messenger.Model.Message;
 
@@ -18,13 +19,15 @@ import java.util.Map;
  * Created by Konstantin on 18.08.2017.
  */
 
-public class DialogFB {
+public class DialogFB  {
     private static DialogFB instance;
     private DatabaseReference databaseReference;
     private Map<String, Object> dialogMap;
+    private ReadFB readFB;
 
     private DialogFB (){
         databaseReference = FirebaseDatabase.getInstance().getReference();
+        readFB = ReadFB.getInstance();
         databaseReference.child("dialogs").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -51,14 +54,12 @@ public class DialogFB {
         databaseReference.child("dialogs").child(key).setValue(dialog);
         return key;
     }
-    public List<Dialog> getContactDialogList(String id){
-        List<Dialog> contactDialogList = new ArrayList<>();
+    public List<Dialog> getContactDialogList(final String id){
+        final List<Dialog> contactDialogList = new ArrayList<>();
         for (Map.Entry<String, Object> entry : dialogMap.entrySet()){
             Map dialog = (Map) entry.getValue();
             List<String> idList = (List<String> ) dialog.get("contacts");
             for (String idContact : idList){
-//                Map value = (Map) idContact.getValue();
-//                String idValue = value.get("id").toString();
                 if(idContact.equals(id)){
                     contactDialogList.add(convertMapToDialog(dialog, entry.getKey()));
                     break;
@@ -66,6 +67,7 @@ public class DialogFB {
             }
         }
         return contactDialogList;
+
     }
     public List<Dialog> getSoloContactDialogList(String id){
         List<Dialog> dialogList = getContactDialogList(id);
