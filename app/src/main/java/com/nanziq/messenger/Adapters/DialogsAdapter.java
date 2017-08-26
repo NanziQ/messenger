@@ -22,11 +22,11 @@ import java.util.List;
 
 public class DialogsAdapter extends RecyclerView.Adapter<DialogsAdapter.ViewHolder> {
 
-    List<DialogView> dialogList;
+    List<Dialog> dialogList;
     Context context;
     private DialogsAdapter.Listener listener;
 
-    public DialogsAdapter(List<DialogView> dialogList, Context context){
+    public DialogsAdapter(List<Dialog> dialogList, Context context){
         this.dialogList = dialogList;
         this.context = context;
     }
@@ -72,7 +72,7 @@ public class DialogsAdapter extends RecyclerView.Adapter<DialogsAdapter.ViewHold
 
     @Override
     public void onBindViewHolder(DialogsAdapter.ViewHolder holder, final int position) {
-        DialogView dialog = dialogList.get(position);
+        Dialog dialog = dialogList.get(position);
         holder.binding.setDialog(dialog);
         holder.binding.executePendingBindings();
         Glide

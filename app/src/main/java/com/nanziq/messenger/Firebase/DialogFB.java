@@ -56,19 +56,24 @@ public class DialogFB  {
     }
     public List<Dialog> getContactDialogList(final String id){
         final List<Dialog> contactDialogList = new ArrayList<>();
-        for (Map.Entry<String, Object> entry : dialogMap.entrySet()){
-            Map dialog = (Map) entry.getValue();
-            List<String> idList = (List<String> ) dialog.get("contacts");
-            for (String idContact : idList){
-                if(idContact.equals(id)){
-                    contactDialogList.add(convertMapToDialog(dialog, entry.getKey()));
-                    break;
+        if (dialogMap !=null) {
+            for (Map.Entry<String, Object> entry : dialogMap.entrySet()) {
+                Map dialog = (Map) entry.getValue();
+                List<String> idList = (List<String>) dialog.get("contacts");
+                for (String idContact : idList) {
+                    if (idContact.equals(id)) {
+                        contactDialogList.add(convertMapToDialog(dialog, entry.getKey()));
+                        break;
+                    }
                 }
             }
+        }else {
+            return null;
         }
         return contactDialogList;
 
     }
+
     public List<Dialog> getSoloContactDialogList(String id){
         List<Dialog> dialogList = getContactDialogList(id);
         List<Dialog> newDialogList = new ArrayList<>();

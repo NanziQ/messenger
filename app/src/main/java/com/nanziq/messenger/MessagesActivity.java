@@ -1,7 +1,9 @@
 package com.nanziq.messenger;
 
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -49,6 +51,9 @@ public class MessagesActivity extends AppCompatActivity
     private FirebaseRecyclerAdapter<DialogView, DialogsAdapter.ViewHolder> firebaseRecyclerAdapter;
     private DatabaseReference databaseReference;
     private Query recyclerQuery;
+    private List<Dialog> dialogList;
+    private DialogsAdapter adapter;
+    private RecyclerView recyclerView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,24 +73,27 @@ public class MessagesActivity extends AppCompatActivity
             finish();
             return;
         }
-        recyclerQuery = databaseReference.child("dailogs").orderByChild("contacts").equalTo(firebaseUser.getUid());
-        firebaseRecyclerAdapter = new FirebaseRecyclerAdapter<DialogView, DialogsAdapter.ViewHolder>(DialogView.class,
-                R.layout.cardview_dialogs,
-                DialogsAdapter.ViewHolder.class,
-                recyclerQuery) {
-            @Override
-            protected void populateViewHolder(DialogsAdapter.ViewHolder viewHolder, DialogView model, int position) {
-                viewHolder.binding.setDialog(model);
-                viewHolder.setListener(new DialogsAdapter.ViewHolder.Listener() {
-                    @Override
-                    public void onClick(View view, int position) {
-                        Intent intent = new Intent(getApplicationContext(), DialogViewActivity.class);
-                        intent.putExtra("dialogId", firebaseRecyclerAdapter.getRef(position).getKey());
-                        startActivity(intent);
-                    }
-                });
-            }
-        };
+        String uid = firebaseUser.getUid();
+//        dialogList = dialogFB.getContactDialogList(uid);
+//        adapter = new DialogsAdapter(dialogList, this);
+        recyclerQuery = databaseReference.child("dialogs").orderByChild("contacts").equalTo(uid);
+//        firebaseRecyclerAdapter = new FirebaseRecyclerAdapter<DialogView, DialogsAdapter.ViewHolder>(DialogView.class,
+//                R.layout.cardview_dialogs,
+//                DialogsAdapter.ViewHolder.class,
+//                recyclerQuery) {
+//            @Override
+//            protected void populateViewHolder(DialogsAdapter.ViewHolder viewHolder, DialogView model, int position) {
+//                viewHolder.binding.setDialog(model);
+//                viewHolder.setListener(new DialogsAdapter.ViewHolder.Listener() {
+//                    @Override
+//                    public void onClick(View view, int position) {
+//                        Intent intent = new Intent(getApplicationContext(), DialogViewActivity.class);
+//                        intent.putExtra("dialogId", firebaseRecyclerAdapter.getRef(position).getKey());
+//                        startActivity(intent);
+//                    }
+//                });
+//            }
+//        };
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -105,17 +113,54 @@ public class MessagesActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
+        recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setHasFixedSize(true);
-//        adapter.setListener(new DialogsAdapter.Listener() {
-//            @Override
-//            public void onClick(int position) {
-////                Toast.makeText(getApplicationContext(),"Открытие диалога "+ position + "!",  Toast.LENGTH_SHORT).show();
-//                startActivity(new Intent(getApplicationContext(), DialogViewActivity.class));
-//            }
-//        });
-        recyclerView.setAdapter(firebaseRecyclerAdapter);
+
+        downloadData();
+//        recyclerView.setAdapter(adapter);
+    }
+
+    public class DownloadData extends AsyncTask<String, Void, Void>{
+        private DialogFB dialogFB1 = DialogFB.getInstance();
+        private DialogsAdapter adapter;
+        private List<Dialog> dialogs = null;
+        @Override
+        protected Void doInBackground(final String... id) {
+
+            while (true) {
+                if (dialogs == null) {
+                    try {
+                        Thread.sleep(500);
+                        dialogs = dialogFB1.getContactDialogList(id[0]);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                } else {
+                    adapter = new DialogsAdapter(dialogs, getApplicationContext());
+                    return null;
+
+                }
+            }
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            adapter.setListener(new DialogsAdapter.Listener() {
+                @Override
+                public void onClick(int position) {
+                    Intent intent = new Intent(getApplicationContext(), DialogViewActivity.class);
+                    intent.putExtra("dialogId", dialogs.get(position).getId());
+                    startActivity(intent);
+                }
+            });
+            recyclerView.setAdapter(adapter);
+        }
+    }
+
+    private void downloadData(){
+       DownloadData downloadData = new DownloadData();
+        downloadData.execute(firebaseUser.getUid());
     }
 
     @Override
