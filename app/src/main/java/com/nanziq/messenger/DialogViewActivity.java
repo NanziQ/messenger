@@ -4,6 +4,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -40,6 +41,11 @@ public class DialogViewActivity extends AppCompatActivity {
         setContentView(R.layout.activity_dialog_view);
         dialogId = getIntent().getStringExtra("dialogId");
         recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+
         enterText = (EditText) findViewById(R.id.enterText);
         buttonSend = (Button) findViewById(R.id.buttonSend);
         messageFB = MessageFB.getInstance();
@@ -81,5 +87,11 @@ public class DialogViewActivity extends AppCompatActivity {
                 enterText.setText("");
             }
         });
+    }
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        finish();
+        return super.onSupportNavigateUp();
     }
 }

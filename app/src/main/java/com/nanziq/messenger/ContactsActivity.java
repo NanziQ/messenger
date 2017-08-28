@@ -5,6 +5,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
@@ -41,6 +42,11 @@ public class ContactsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_contacts);
         RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+
 
         dialogFB = DialogFB.getInstance();
         contactFB = ContactFB.getInstance();
@@ -72,13 +78,24 @@ public class ContactsActivity extends AppCompatActivity {
 //                                List<Dialog> friendSoloDialogList = dialogFB.getSoloContactDialogList(contactFB.getContactUid(position));
 
                                 String friendUid = contactFB.getContactUid(firebaseRecyclerAdapter.getRef(position).getKey());
-                                boolean checkDialog=false;
+                                boolean checkDialog = false;
                                 String key = "";
 
-                                for (Dialog item: currentUserSoloDialogList){
-                                    List<String> contacts = item.getContacts();
-                                    for (String id: contacts){
-                                        if (friendUid.equals(id)){
+                                if (!firebaseUser.getUid().equals(friendUid)) {
+                                    for (Dialog item : currentUserSoloDialogList) {
+                                        List<String> contacts = item.getContacts();
+                                        for (String id : contacts) {
+                                            if (friendUid.equals(id)) {
+                                                checkDialog = true;
+                                                key = item.getId();
+                                                break;
+                                            }
+                                        }
+                                    }
+                                } else {
+                                    for (Dialog item : currentUserSoloDialogList) {
+                                        List<String> contacts = item.getContacts();
+                                        if (contacts.size() == 1 && contacts.get(0).equals(firebaseUser.getUid())){
                                             checkDialog = true;
                                             key = item.getId();
                                             break;
@@ -92,8 +109,10 @@ public class ContactsActivity extends AppCompatActivity {
                                 }else {
                                     List<String> contactsId = new ArrayList<>();
                                     contactsId.add(firebaseUser.getUid());
-                                    contactsId.add(friendUid);
-                                    key = dialogFB.createNewDialog("Dialog", null, null, null, contactsId, true);
+                                    if (!firebaseUser.getUid().equals(friendUid)) {
+                                        contactsId.add(friendUid);
+                                    }
+                                    key = dialogFB.createNewDialog("Dialog" + position, null, null, null, contactsId, true);
                                     Intent intent = new Intent(getApplicationContext(), DialogViewActivity.class);
                                     intent.putExtra("dialogId", key);
                                     startActivity(intent);
@@ -117,5 +136,11 @@ public class ContactsActivity extends AppCompatActivity {
 //            }
 //        });
         recyclerView.setAdapter(firebaseRecyclerAdapter);
+    }
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        finish();
+        return super.onSupportNavigateUp();
     }
 }

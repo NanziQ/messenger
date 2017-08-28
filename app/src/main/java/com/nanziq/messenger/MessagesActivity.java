@@ -119,17 +119,17 @@ public class MessagesActivity extends AppCompatActivity
         @Override
         protected Void doInBackground(final String... id) {
 
+            dialogs = null;
             while (true) {
                 if (dialogs == null) {
                     try {
-                        Thread.sleep(500);
+                        Thread.sleep(250);
                         dialogs = dialogFB1.getContactDialogList(id[0]);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
                 } else {
                     adapter = new DialogsAdapter(dialogs, getApplicationContext());
-                    dialogs = null;
                     return null;
 
                 }

@@ -49,6 +49,7 @@ public class SignInActivity extends AppCompatActivity {
     private static final String ENTER_PHONE= "enter_phone";
     private static final String ENTER_CODE= "enter_code";
     private static final String ENTER_NAME= "enter_name";
+    private String currentState;
 
     private FirebaseAuth firebaseAuth;
     private FirebaseUser firebaseUser;
@@ -194,6 +195,7 @@ public class SignInActivity extends AppCompatActivity {
     }
 
     private void updateUI(String s){
+        currentState = s;
         if(s == ENTER_CODE){
             disableViews(phoneNumber, labelEnterPhone, labelEnterName, inputNameLayout, textName);
             enableViews(inputCodeLayout, textCode, button);
@@ -231,5 +233,17 @@ public class SignInActivity extends AppCompatActivity {
             phoneNumbers.add((String) singleUser.get("phone"));
         }
         return phoneNumbers;
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putString("currentState", currentState);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        updateUI(savedInstanceState.getString("currentState"));
     }
 }
