@@ -28,7 +28,7 @@ public class DialogFB  {
     private DialogFB (){
         databaseReference = FirebaseDatabase.getInstance().getReference();
         readFB = ReadFB.getInstance();
-        databaseReference.child("dialogs").addListenerForSingleValueEvent(new ValueEventListener() {
+        databaseReference.child("dialogs").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 dialogMap =  (Map<String, Object>) dataSnapshot.getValue();
@@ -60,10 +60,12 @@ public class DialogFB  {
             for (Map.Entry<String, Object> entry : dialogMap.entrySet()) {
                 Map dialog = (Map) entry.getValue();
                 List<String> idList = (List<String>) dialog.get("contacts");
-                for (String idContact : idList) {
-                    if (idContact.equals(id)) {
-                        contactDialogList.add(convertMapToDialog(dialog, entry.getKey()));
-                        break;
+                if (idList != null) {
+                    for (String idContact : idList) {
+                        if (idContact.equals(id)) {
+                            contactDialogList.add(convertMapToDialog(dialog, entry.getKey()));
+                            break;
+                        }
                     }
                 }
             }

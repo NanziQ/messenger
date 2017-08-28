@@ -23,9 +23,12 @@ import android.widget.Toast;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 import com.nanziq.messenger.Adapters.ContactsAdapter;
 import com.nanziq.messenger.Adapters.DialogsAdapter;
 import com.nanziq.messenger.Firebase.ContactFB;
@@ -41,6 +44,7 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.Map;
 
 public class MessagesActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -48,11 +52,8 @@ public class MessagesActivity extends AppCompatActivity
     private FirebaseUser firebaseUser;
     private ContactFB contactFB;
     private DialogFB dialogFB;
-    private FirebaseRecyclerAdapter<DialogView, DialogsAdapter.ViewHolder> firebaseRecyclerAdapter;
     private DatabaseReference databaseReference;
-    private Query recyclerQuery;
-    private List<Dialog> dialogList;
-    private DialogsAdapter adapter;
+
     private RecyclerView recyclerView;
 
     @Override
@@ -73,27 +74,6 @@ public class MessagesActivity extends AppCompatActivity
             finish();
             return;
         }
-        String uid = firebaseUser.getUid();
-//        dialogList = dialogFB.getContactDialogList(uid);
-//        adapter = new DialogsAdapter(dialogList, this);
-        recyclerQuery = databaseReference.child("dialogs").orderByChild("contacts").equalTo(uid);
-//        firebaseRecyclerAdapter = new FirebaseRecyclerAdapter<DialogView, DialogsAdapter.ViewHolder>(DialogView.class,
-//                R.layout.cardview_dialogs,
-//                DialogsAdapter.ViewHolder.class,
-//                recyclerQuery) {
-//            @Override
-//            protected void populateViewHolder(DialogsAdapter.ViewHolder viewHolder, DialogView model, int position) {
-//                viewHolder.binding.setDialog(model);
-//                viewHolder.setListener(new DialogsAdapter.ViewHolder.Listener() {
-//                    @Override
-//                    public void onClick(View view, int position) {
-//                        Intent intent = new Intent(getApplicationContext(), DialogViewActivity.class);
-//                        intent.putExtra("dialogId", firebaseRecyclerAdapter.getRef(position).getKey());
-//                        startActivity(intent);
-//                    }
-//                });
-//            }
-//        };
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -117,8 +97,19 @@ public class MessagesActivity extends AppCompatActivity
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setHasFixedSize(true);
 
-        downloadData();
-//        recyclerView.setAdapter(adapter);
+//        downloadData();
+
+        databaseReference.child("dialogs").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                downloadData();
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
     }
 
     public class DownloadData extends AsyncTask<String, Void, Void>{
@@ -138,6 +129,7 @@ public class MessagesActivity extends AppCompatActivity
                     }
                 } else {
                     adapter = new DialogsAdapter(dialogs, getApplicationContext());
+                    dialogs = null;
                     return null;
 
                 }
@@ -159,7 +151,7 @@ public class MessagesActivity extends AppCompatActivity
     }
 
     private void downloadData(){
-       DownloadData downloadData = new DownloadData();
+        DownloadData downloadData = new DownloadData();
         downloadData.execute(firebaseUser.getUid());
     }
 
