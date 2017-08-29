@@ -103,12 +103,13 @@ public class SignInActivity extends AppCompatActivity {
         callbacks = new PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
             @Override
             public void onVerificationCompleted(PhoneAuthCredential phoneAuthCredential) {
-
+                Toast.makeText(getApplicationContext(), "Верификация выполнена", Toast.LENGTH_SHORT).show();
+                signInWithPhoneAuthCredential(phoneAuthCredential);
             }
 
             @Override
             public void onVerificationFailed(FirebaseException e) {
-                Toast.makeText(getApplicationContext(), "Ошибка верификации", Toast.LENGTH_SHORT);
+                Toast.makeText(getApplicationContext(), "Ошибка верификации", Toast.LENGTH_SHORT).show();
             }
 
             @Override
@@ -184,10 +185,11 @@ public class SignInActivity extends AppCompatActivity {
 
                         } else {
                             // Sign in failed, display a message and update the UI
-
+                            Toast.makeText(getApplicationContext(), "Ошибка. Попробуйте снова.", Toast.LENGTH_SHORT).show();
+                            updateUI(ENTER_PHONE);
                             if (task.getException() instanceof FirebaseAuthInvalidCredentialsException) {
                                 // The verification code entered was invalid
-                                Toast.makeText(getApplicationContext(), "Неверный код", Toast.LENGTH_SHORT);
+                                Toast.makeText(getApplicationContext(), "Неверный код", Toast.LENGTH_SHORT).show();
                             }
                         }
                     }
@@ -209,6 +211,8 @@ public class SignInActivity extends AppCompatActivity {
             enableViews(labelEnterName, inputNameLayout, textName, button);
             enableOnClickListener(ENTER_NAME);
         }
+        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
     }
 
     private void enableViews(View... views) {
@@ -239,11 +243,13 @@ public class SignInActivity extends AppCompatActivity {
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putString("currentState", currentState);
+        outState.putString("verificationId", verificationId);
     }
 
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
+        verificationId = savedInstanceState.getString("verificationId");
         updateUI(savedInstanceState.getString("currentState"));
     }
 }
