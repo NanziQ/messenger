@@ -19,6 +19,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -40,6 +41,8 @@ import com.nanziq.messenger.Model.Contact;
 import com.nanziq.messenger.Model.Dialog;
 import com.nanziq.messenger.Model.DialogView;
 import com.nanziq.messenger.Model.Message;
+
+import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -69,7 +72,6 @@ public class MessagesActivity extends AppCompatActivity
         dialogFB = DialogFB.getInstance();
         databaseReference = FirebaseDatabase.getInstance().getReference();
 
-
         firebaseAuth = FirebaseAuth.getInstance();
         firebaseUser = firebaseAuth.getCurrentUser();
         if(firebaseUser == null){
@@ -97,7 +99,9 @@ public class MessagesActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        updateNavHeader();
+
+
+//        updateNavHeader();
 
         recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -159,11 +163,20 @@ public class MessagesActivity extends AppCompatActivity
         protected void onPostExecute(Void aVoid) {
             TextView userName = (TextView) findViewById(R.id.userName);
             userName.setText(databaseUser.getName());
+            TextView userPhone = (TextView) findViewById(R.id.userPhone);
+            userPhone.setText(databaseUser.getPhone());
             ImageView userImage = (ImageView) findViewById(R.id.userImage);
             Glide
                     .with(getApplicationContext())
                     .load(databaseUser.getImage())
                     .into(userImage);
+            View headerLayout = findViewById(R.id.navigationHeaderLayout);
+            headerLayout.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    startActivity(new Intent(getApplicationContext(), ProfileActivity.class));
+                }
+            });
         }
     }
 

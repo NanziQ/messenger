@@ -29,12 +29,17 @@
             android:name=".LoginActivity"
             android:label="@string/title_activity_login"
             android:windowSoftInputMode="stateAlwaysVisible" />
-        <activity android:name=".ContactsActivity"
+        <activity
+            android:name=".ContactsActivity"
             android:label="@string/contacts"
-            android:theme="@style/AppTheme.NoActionBar"/>
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".SignInActivity" />
-        <activity android:name=".DialogViewActivity"
+        <activity
+            android:name=".DialogViewActivity"
             android:label="@string/messages"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity android:name=".ProfileActivity"
+            android:label="@string/profile"
             android:theme="@style/AppTheme.NoActionBar"/>
     </application>
 
