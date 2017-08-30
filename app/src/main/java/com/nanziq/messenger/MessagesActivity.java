@@ -18,8 +18,11 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -75,6 +78,7 @@ public class MessagesActivity extends AppCompatActivity
             return;
         }
 
+
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -93,11 +97,11 @@ public class MessagesActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
+        updateNavHeader();
+
         recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setHasFixedSize(true);
-
-//        downloadData();
 
         databaseReference.child("dialogs").addValueEventListener(new ValueEventListener() {
             @Override
@@ -110,9 +114,65 @@ public class MessagesActivity extends AppCompatActivity
 
             }
         });
+
+        databaseReference.child("contacts").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                updateNavHeader();
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
     }
 
-    public class DownloadData extends AsyncTask<String, Void, Void>{
+    private void updateNavHeader(){
+        UpdateNavHeader updateNavHeader = new UpdateNavHeader();
+        updateNavHeader.execute(firebaseUser);
+    }
+
+    private class UpdateNavHeader extends AsyncTask<FirebaseUser, Void, Void>{
+
+        private Contact databaseUser;
+        private ContactFB contactFB1 = ContactFB.getInstance();
+        @Override
+        protected Void doInBackground(FirebaseUser... firebaseUsers) {
+            databaseUser = null;
+            while (true) {
+                if (databaseUser == null) {
+                    try {
+                        Thread.sleep(500);
+                        databaseUser = contactFB1.getContactFromUid(firebaseUsers[0].getUid());
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+                else {
+                    return null;
+                }
+            }
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            TextView userName = (TextView) findViewById(R.id.userName);
+            userName.setText(databaseUser.getName());
+            ImageView userImage = (ImageView) findViewById(R.id.userImage);
+            Glide
+                    .with(getApplicationContext())
+                    .load(databaseUser.getImage())
+                    .into(userImage);
+        }
+    }
+
+
+    private void downloadData(){
+        DownloadData downloadData = new DownloadData();
+        downloadData.execute(firebaseUser.getUid());
+    }
+    private class DownloadData extends AsyncTask<String, Void, Void>{
         private DialogFB dialogFB1 = DialogFB.getInstance();
         private DialogsAdapter adapter;
         private List<Dialog> dialogs = null;
@@ -148,11 +208,6 @@ public class MessagesActivity extends AppCompatActivity
             });
             recyclerView.setAdapter(adapter);
         }
-    }
-
-    private void downloadData(){
-        DownloadData downloadData = new DownloadData();
-        downloadData.execute(firebaseUser.getUid());
     }
 
     @Override

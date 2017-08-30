@@ -5,7 +5,9 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.nanziq.messenger.Model.Contact;
 
+import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -21,7 +23,7 @@ public class ContactFB {
 
     private ContactFB (){
         databaseReference = FirebaseDatabase.getInstance().getReference();
-        databaseReference.child("contacts").addListenerForSingleValueEvent(new ValueEventListener() {
+        databaseReference.child("contacts").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 contactMap =  (Map<String, Object>) dataSnapshot.getValue();
@@ -85,5 +87,32 @@ public class ContactFB {
             }
         }
         return null;
+    }
+
+    public Contact getContactFromUid(String uid){
+        Contact contact;
+        if (contactMap != null) {
+            for (Map.Entry<String, Object> entry : contactMap.entrySet()) {
+                Map map = (Map) entry.getValue();
+                if (map.get("uid").equals(uid)) {
+                    contact = convertMapToContact(map);
+                    if (contact != null) {
+                        return contact;
+                    } else {
+                        return null;
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
+    public Contact convertMapToContact(Map map){
+        Contact contact = new Contact();
+        contact.setUid((String) map.get("uid"));
+        contact.setName((String) map.get("name"));
+        contact.setPhone((String) map.get("phone"));
+        contact.setImage((String) map.get("image"));
+        return contact;
     }
 }

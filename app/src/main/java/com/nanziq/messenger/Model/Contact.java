@@ -11,18 +11,16 @@ public class Contact {
     public String name;
     public String phone;
     public String image;
-    public List<Long> dialogs;
 
     public Contact(){
 
     }
 
-    public Contact(String uid, String name, String phone,  String image, List<Long> dialogs){
+    public Contact(String uid, String name, String phone,  String image){
         this.uid = uid;
         this.name = name;
         this.phone = phone;
         this.image = image;
-        this.dialogs = dialogs;
     }
 
     public String getName() {
@@ -49,11 +47,11 @@ public class Contact {
         return phone;
     }
 
-    public void setDialogs(List<Long> dialogs) {
-        this.dialogs = dialogs;
+    public void setUid(String uid) {
+        this.uid = uid;
     }
 
-    public List<Long> getDialogs() {
-        return dialogs;
+    public String getUid() {
+        return uid;
     }
 }

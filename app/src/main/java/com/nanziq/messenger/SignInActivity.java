@@ -141,7 +141,7 @@ public class SignInActivity extends AppCompatActivity {
                 @Override
                 public void onClick(View view) {
                     firebaseUser = firebaseAuth.getCurrentUser();
-                    Contact contact = new Contact(firebaseUser.getUid(), textName.getText().toString(), "+" + phoneNumber.getText(true).toString(), "", null);
+                    Contact contact = new Contact(firebaseUser.getUid(), textName.getText().toString(), "+" + phoneNumber.getText(true).toString(), "");
                     databaseReference.child("contacts").push().setValue(contact);
                     startActivity(new Intent(getApplicationContext(), MessagesActivity.class));
                 }
