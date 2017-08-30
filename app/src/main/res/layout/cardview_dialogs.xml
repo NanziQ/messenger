@@ -31,7 +31,7 @@
                 android:layout_toEndOf="@+id/imageView"
                 android:layout_toLeftOf="@+id/time"
                 android:layout_toRightOf="@+id/imageView"
-                android:text="@{dialog.name}"/>
+                android:text="@{dialog.getDialogNameFormat}"/>
 
             <TextView
                 android:id="@+id/text"

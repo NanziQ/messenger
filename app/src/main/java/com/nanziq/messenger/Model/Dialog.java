@@ -1,5 +1,9 @@
 package com.nanziq.messenger.Model;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.nanziq.messenger.Firebase.ContactFB;
+
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -84,5 +88,25 @@ public class Dialog {
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    public String getDialogNameFormat(){
+        if (!this.solo){
+            return this.name;
+        } else {
+            ContactFB contactFB = ContactFB.getInstance();
+            if (this.contacts.size()==1){
+                return contactFB.getContactNameFromUid(this.contacts.get(0));
+            }else {
+
+                String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+                for (String contact : this.contacts) {
+                    if (!contact.equals(uid)) {
+                        return contactFB.getContactNameFromUid(contact);
+                    }
+                }
+            }
+        }
+        return null;
     }
 }
