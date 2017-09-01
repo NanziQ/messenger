@@ -38,9 +38,13 @@
             android:name=".DialogViewActivity"
             android:label="@string/messages"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".ProfileActivity"
+        <activity
+            android:name=".ProfileActivity"
             android:label="@string/profile"
-            android:theme="@style/AppTheme.NoActionBar"/>
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity android:name=".Profile.EditNameActivity"
+            android:label="@string/name"
+            android:theme="@style/AppTheme.NoActionBar" />
     </application>
 
 </manifest>

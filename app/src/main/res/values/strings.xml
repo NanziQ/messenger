@@ -31,4 +31,10 @@
     <string name="name">Имя</string>
     <string name="dialogs">Диалоги</string>
     <string name="profile">Профиль</string>
+
+    <string-array name="profile_strings">
+        <item>Заменить фотографию</item>
+        <item>Сменить имя</item>
+        <item>Уведомления</item>
+    </string-array>
 </resources>
