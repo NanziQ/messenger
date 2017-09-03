@@ -14,6 +14,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.nanziq.messenger.Adapters.ProfileAdapter;
 import com.nanziq.messenger.Firebase.ContactFB;
 import com.nanziq.messenger.Model.Contact;
+import com.nanziq.messenger.Profile.EditImageActivity;
 import com.nanziq.messenger.Profile.EditNameActivity;
 
 import java.util.ArrayList;
@@ -52,6 +53,7 @@ public class ProfileActivity extends AppCompatActivity {
             public void OnClick(int position) {
                 switch (position){
                     case 0:
+                        startActivity(new Intent(getApplicationContext(), EditImageActivity.class));
                         break;
                     case 1:
                         startActivity(new Intent(getApplicationContext(), EditNameActivity.class));

@@ -42,9 +42,13 @@
             android:name=".ProfileActivity"
             android:label="@string/profile"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".Profile.EditNameActivity"
+        <activity
+            android:name=".Profile.EditNameActivity"
             android:label="@string/name"
             android:theme="@style/AppTheme.NoActionBar" />
+        <activity android:name=".Profile.EditImageActivity"
+            android:label="@string/photo"
+            android:theme="@style/AppTheme.NoActionBar"/>
     </application>
 
 </manifest>

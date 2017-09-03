@@ -44,6 +44,21 @@ public class ContactFB {
         return instance;
     }
 
+    public void updateContact(Contact contact){
+        databaseReference.child("contacts").child(getKeyFromUid(contact.getUid())).setValue(contact);
+
+    }
+
+    public String getKeyFromUid(String uid){
+        for (Map.Entry<String, Object> entry: contactMap.entrySet()){
+            Map contact = (Map) entry.getValue();
+            if (contact.get("uid").toString().equals(uid)){
+                return entry.getKey();
+            }
+        }
+        return null;
+    }
+
     public String getContactUid(String key){
         for (Map.Entry<String, Object> entry: contactMap.entrySet()){
             if (entry.getKey().equals(key)){
@@ -74,10 +89,10 @@ public class ContactFB {
         return null;
     }
 
-    public String getContactNameFromUid(String key){
+    public String getContactNameFromUid(String uid){
         for (Map.Entry<String, Object> entry: contactMap.entrySet()){
             Map contact = (Map) entry.getValue();
-            if (contact.get("uid").equals(key)){
+            if (contact.get("uid").equals(uid)){
                 String name = contact.get("name").toString();
                 if (name != null) {
                     return name;

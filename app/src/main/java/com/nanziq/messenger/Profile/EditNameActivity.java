@@ -1,5 +1,6 @@
 package com.nanziq.messenger.Profile;
 
+import android.support.design.widget.TextInputEditText;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -7,10 +8,19 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.nanziq.messenger.Firebase.ContactFB;
+import com.nanziq.messenger.Model.Contact;
 import com.nanziq.messenger.R;
 
 public class EditNameActivity extends AppCompatActivity {
 
+    private FirebaseAuth firebaseAuth;
+    private FirebaseUser firebaseUser;
+    private ContactFB contactFB;
+    private Contact contact;
+    private TextInputEditText textInputEditText;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -19,6 +29,13 @@ public class EditNameActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
+
+        firebaseAuth = FirebaseAuth.getInstance();
+        firebaseUser = firebaseAuth.getCurrentUser();
+        contactFB = ContactFB.getInstance();
+        contact = contactFB.getContactFromUid(firebaseUser.getUid());
+        textInputEditText = (TextInputEditText) findViewById(R.id.textInputEditText);
+        textInputEditText.setText(contact.getName());
     }
 
     @Override
@@ -37,7 +54,9 @@ public class EditNameActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()){
             case R.id.checkMark:
-                Toast.makeText(this, "tttt",Toast.LENGTH_SHORT).show();
+                contact.setName(textInputEditText.getText().toString());
+                contactFB.updateContact(contact);
+                finish();
                 break;
             default:
                 break;
