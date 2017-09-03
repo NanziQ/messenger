@@ -1,6 +1,7 @@
 package com.nanziq.messenger;
 
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -11,6 +12,11 @@ import android.widget.ImageView;
 import com.bumptech.glide.Glide;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.nanziq.messenger.Adapters.ProfileAdapter;
 import com.nanziq.messenger.Firebase.ContactFB;
 import com.nanziq.messenger.Model.Contact;
@@ -20,12 +26,16 @@ import com.nanziq.messenger.Profile.EditNameActivity;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 public class ProfileActivity extends AppCompatActivity {
     private FirebaseAuth firebaseAuth;
     private FirebaseUser firebaseUser;
     private ContactFB contactFB;
     private RecyclerView recyclerView;
+    private Contact contact;
+    private ImageView imageView;
+    private DatabaseReference databaseReference;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,15 +43,13 @@ public class ProfileActivity extends AppCompatActivity {
         firebaseAuth = FirebaseAuth.getInstance();
         firebaseUser = firebaseAuth.getCurrentUser();
         contactFB = ContactFB.getInstance();
-        Contact contact = contactFB.getContactFromUid(firebaseUser.getUid());
+        databaseReference = FirebaseDatabase.getInstance().getReference();
+        contact = contactFB.getContactFromUid(firebaseUser.getUid());
         setContentView(R.layout.activity_profile);
         Toolbar toolbar = (Toolbar) findViewById(R.id.main_toolbar);
         toolbar.setTitle(contact.getName());
-        ImageView imageView = (ImageView) findViewById(R.id.main_backdrop);
-        Glide
-                .with(this)
-                .load(contact.getImage())
-                .into(imageView);
+        imageView = (ImageView) findViewById(R.id.main_backdrop);
+
         recyclerView = (RecyclerView) findViewById(R.id.profile_recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setHasFixedSize(true);
@@ -66,5 +74,39 @@ public class ProfileActivity extends AppCompatActivity {
             }
         });
         recyclerView.setAdapter(adapter);
+
+        databaseReference.child("contacts").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                downloadImage();
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    private void downloadImage(){
+        DownloadImage downloadImage = new DownloadImage();
+        downloadImage.execute();
+    }
+    public class DownloadImage extends AsyncTask<Void, Void, Void>{
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            contact = contactFB.getContactFromUid(firebaseUser.getUid());
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            Glide
+                    .with(getApplicationContext())
+                    .load(contact.getImage())
+                    .into(imageView);
+        }
     }
 }
