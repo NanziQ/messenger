@@ -3,6 +3,7 @@ package com.nanziq.messenger.Profile;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
@@ -39,6 +40,7 @@ import java.util.List;
 
 public class EditImageActivity extends AppCompatActivity {
     static final int GALLERY_REQUEST = 1;
+    static final int CAMERA_RESULT = 2;
 
     private RecyclerView recyclerView;
     private FirebaseAuth firebaseAuth;
@@ -79,6 +81,8 @@ public class EditImageActivity extends AppCompatActivity {
                         startActivityForResult(photoPickerIntent, GALLERY_REQUEST);
                         break;
                     case 1:
+                        Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                        startActivityForResult(cameraIntent, CAMERA_RESULT);
                         break;
                     case 2:
                         break;
@@ -131,6 +135,9 @@ public class EditImageActivity extends AppCompatActivity {
                     .load(selectedImage)
                     .into(imageView);
             imageName = selectedImage.getEncodedPath().replaceAll("[\\D]","") + "img";
+        }else if (requestCode == CAMERA_RESULT) {
+            Bitmap bitmap = (Bitmap) data.getExtras().get("data");
+            imageView.setImageBitmap(bitmap);
         }
     }
 
@@ -156,5 +163,19 @@ public class EditImageActivity extends AppCompatActivity {
                 contactFB.updateContact(contact);
             }
         });
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        Bitmap bitmap = ((BitmapDrawable)imageView.getDrawable()).getBitmap();
+        outState.putParcelable("imageView",bitmap);
+
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        imageView.setImageBitmap((Bitmap)savedInstanceState.get("imageView"));
     }
 }
