@@ -102,7 +102,7 @@ public class DialogFB  {
     private Message convertMapToMessage(Map map){
         Message message = new Message();
         message.setText((String) map.get("text"));
-        message.setName((String) map.get("name"));
+        message.setUid((String) map.get("uid"));
         return message;
     }
 

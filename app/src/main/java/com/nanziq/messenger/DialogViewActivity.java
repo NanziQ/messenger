@@ -25,7 +25,7 @@ import com.nanziq.messenger.Model.Contact;
 import com.nanziq.messenger.Model.Message;
 
 public class DialogViewActivity extends AppCompatActivity {
-    private String dialogId = "-123";
+    private String dialogId = "-666";
     private RecyclerView recyclerView;
     private DatabaseReference databaseReference;
     private FirebaseRecyclerAdapter<Message, MessageViewHolder> firebaseRecyclerAdapter;
@@ -62,6 +62,16 @@ public class DialogViewActivity extends AppCompatActivity {
                     @Override
                     protected void populateViewHolder(MessageViewHolder viewHolder, Message model, int position) {
                         viewHolder.binding.setMessage(model);
+                        if (model.getUid().equals(firebaseUser.getUid())){
+                            viewHolder.binding.messageCardView.setBackground(getResources().getDrawable(R.color.colorYourselfUser));
+                        }
+                        String image = contactFB.getContactFromUid(model.getUid()).getImage();
+                        if (image != null) {
+                            Glide
+                                    .with(getApplicationContext())
+                                    .load(image)
+                                    .into(viewHolder.binding.messageImage);
+                        }
                     }
 
                     @Override
@@ -83,7 +93,7 @@ public class DialogViewActivity extends AppCompatActivity {
         buttonSend.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                messageFB.sendMessage(dialogId, contactFB.getContactNameFromUid(firebaseUser.getUid()), enterText.getText().toString());
+                messageFB.sendMessage(dialogId, firebaseUser.getUid(), enterText.getText().toString());
                 enterText.setText("");
             }
         });

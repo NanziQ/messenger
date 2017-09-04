@@ -24,8 +24,8 @@ public class MessageFB {
         return instance;
     }
 
-    public void sendMessage(String dialogId, String name, String text){
-        Message message = new Message(name, text);
+    public void sendMessage(String dialogId, String uid, String text){
+        Message message = new Message(uid, text);
         databaseReference.child("dialogs").child(dialogId).child("messages").push().setValue(message);
     }
 }
