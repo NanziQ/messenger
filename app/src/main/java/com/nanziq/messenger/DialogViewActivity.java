@@ -13,10 +13,13 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
+import com.firebase.ui.storage.images.FirebaseImageLoader;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 import com.nanziq.messenger.Adapters.ContactsAdapter;
 import com.nanziq.messenger.Adapters.MessageViewHolder;
 import com.nanziq.messenger.Firebase.ContactFB;
@@ -35,6 +38,8 @@ public class DialogViewActivity extends AppCompatActivity {
     private ContactFB contactFB;
     private EditText enterText;
     private Button buttonSend;
+    private StorageReference storageReference;
+    private Contact databaseUser;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -52,6 +57,8 @@ public class DialogViewActivity extends AppCompatActivity {
         contactFB = ContactFB.getInstance();
         firebaseAuth = FirebaseAuth.getInstance();
         firebaseUser = firebaseAuth.getCurrentUser();
+        storageReference  = FirebaseStorage.getInstance().getReference();
+        databaseUser = contactFB.getContactFromUid(firebaseUser.getUid());
 
         databaseReference = FirebaseDatabase.getInstance().getReference();
         firebaseRecyclerAdapter =
@@ -65,13 +72,11 @@ public class DialogViewActivity extends AppCompatActivity {
                         if (model.getUid().equals(firebaseUser.getUid())){
                             viewHolder.binding.messageCardView.setBackground(getResources().getDrawable(R.color.colorYourselfUser));
                         }
-                        String image = contactFB.getContactFromUid(model.getUid()).getImage();
-                        if (image != null) {
-                            Glide
-                                    .with(getApplicationContext())
-                                    .load(image)
-                                    .into(viewHolder.binding.messageImage);
-                        }
+                        Glide
+                                .with(getApplicationContext())
+                                .using(new FirebaseImageLoader())
+                                .load(storageReference.child("images/" + databaseUser.getImage()))
+                                .into(viewHolder.binding.messageImage);
                     }
 
                     @Override

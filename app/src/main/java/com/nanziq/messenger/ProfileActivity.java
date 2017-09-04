@@ -10,6 +10,7 @@ import android.support.v7.widget.Toolbar;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
+import com.firebase.ui.storage.images.FirebaseImageLoader;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -17,6 +18,8 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 import com.nanziq.messenger.Adapters.ProfileAdapter;
 import com.nanziq.messenger.Firebase.ContactFB;
 import com.nanziq.messenger.Model.Contact;
@@ -36,6 +39,7 @@ public class ProfileActivity extends AppCompatActivity {
     private Contact contact;
     private ImageView imageView;
     private DatabaseReference databaseReference;
+    private StorageReference storageReference;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,6 +48,7 @@ public class ProfileActivity extends AppCompatActivity {
         firebaseUser = firebaseAuth.getCurrentUser();
         contactFB = ContactFB.getInstance();
         databaseReference = FirebaseDatabase.getInstance().getReference();
+        storageReference = FirebaseStorage.getInstance().getReference();
         contact = contactFB.getContactFromUid(firebaseUser.getUid());
         setContentView(R.layout.activity_profile);
         Toolbar toolbar = (Toolbar) findViewById(R.id.main_toolbar);
@@ -105,7 +110,8 @@ public class ProfileActivity extends AppCompatActivity {
             super.onPostExecute(aVoid);
             Glide
                     .with(getApplicationContext())
-                    .load(contact.getImage())
+                    .using(new FirebaseImageLoader())
+                    .load(storageReference.child("images/" + contact.getImage()))
                     .into(imageView);
         }
     }

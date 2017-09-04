@@ -25,6 +25,7 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
+import com.firebase.ui.storage.images.FirebaseImageLoader;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -33,6 +34,8 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 import com.nanziq.messenger.Adapters.ContactsAdapter;
 import com.nanziq.messenger.Adapters.DialogsAdapter;
 import com.nanziq.messenger.Firebase.ContactFB;
@@ -61,6 +64,7 @@ public class MessagesActivity extends AppCompatActivity
     private DatabaseReference databaseReference;
 
     private RecyclerView recyclerView;
+    private StorageReference storageReference;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,6 +75,7 @@ public class MessagesActivity extends AppCompatActivity
         contactFB = ContactFB.getInstance();
         dialogFB = DialogFB.getInstance();
         databaseReference = FirebaseDatabase.getInstance().getReference();
+        storageReference = FirebaseStorage.getInstance().getReference();
 
         firebaseAuth = FirebaseAuth.getInstance();
         firebaseUser = firebaseAuth.getCurrentUser();
@@ -168,7 +173,8 @@ public class MessagesActivity extends AppCompatActivity
             ImageView userImage = (ImageView) findViewById(R.id.userImage);
             Glide
                     .with(getApplicationContext())
-                    .load(databaseUser.getImage())
+                    .using(new FirebaseImageLoader())
+                    .load(storageReference.child("images/" + databaseUser.getImage()))
                     .into(userImage);
             View headerLayout = findViewById(R.id.navigationHeaderLayout);
             headerLayout.setOnClickListener(new View.OnClickListener() {
