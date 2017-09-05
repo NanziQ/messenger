@@ -175,7 +175,6 @@ public class MessagesActivity extends AppCompatActivity
                     .with(getApplicationContext())
                     .using(new FirebaseImageLoader())
                     .load(storageReference.child("images/" + databaseUser.getImage()))
-                    .placeholder(R.drawable.ic_account_black_48dp)
                     .into(userImage);
             View headerLayout = findViewById(R.id.navigationHeaderLayout);
             headerLayout.setOnClickListener(new View.OnClickListener() {

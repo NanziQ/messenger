@@ -89,7 +89,12 @@ public class EditImageActivity extends AppCompatActivity {
                         startActivityForResult(cameraIntent, CAMERA_RESULT);
                         break;
                     case 2:
-                        deleteImage();
+                        Glide
+                                .with(getApplicationContext())
+                                .using(new FirebaseImageLoader())
+                                .load(storageReference.child("images/null.png"))
+                                .into(imageView);
+                        imageNull = true;
                         break;
                     default:
                         break;
@@ -102,7 +107,6 @@ public class EditImageActivity extends AppCompatActivity {
                 .with(getApplicationContext())
                 .using(new FirebaseImageLoader())
                 .load(storageReference.child("images/" + contact.getImage()))
-                .placeholder(R.drawable.ic_account_black_48dp)
                 .into(imageView);
     }
 
@@ -123,7 +127,10 @@ public class EditImageActivity extends AppCompatActivity {
         switch (item.getItemId()){
             case R.id.checkMark:
                 if (!imageNull) {
+                    deleteImage();
                     uploadImage(imageView);
+                }else {
+                    deleteImage();
                 }
                 finish();
                 break;
@@ -144,6 +151,7 @@ public class EditImageActivity extends AppCompatActivity {
                     .with(this)
                     .load(selectedImage)
                     .into(imageView);
+            imageNull = false;
             imageName = selectedImage.getEncodedPath().replaceAll("[\\D]","") + "img";
         }else if (requestCode == CAMERA_RESULT) {
             Bitmap bitmap = (Bitmap) data.getExtras().get("data");
@@ -159,11 +167,6 @@ public class EditImageActivity extends AppCompatActivity {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
         byte[] data = baos.toByteArray();
-
-        Bitmap decoded = BitmapFactory.decodeStream(new ByteArrayInputStream(data));
-
-        Log.e("Original   dimensions", bitmap.getWidth()+" "+bitmap.getHeight());
-        Log.e("Compressed dimensions", decoded.getWidth()+" "+decoded.getHeight());
 
         UploadTask uploadTask = storageReference.child("images/" + imageName).putBytes(data);
         uploadTask.addOnFailureListener(new OnFailureListener() {
@@ -182,15 +185,15 @@ public class EditImageActivity extends AppCompatActivity {
     }
 
     private void deleteImage(){
-        storageReference.child("images/" + contact.getImage()).delete().addOnSuccessListener(new OnSuccessListener<Void>() {
-            @Override
-            public void onSuccess(Void aVoid) {
-            }
-        });
+        if (!contact.getImage().equals("null.png")) {
+            storageReference.child("images/" + contact.getImage()).delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+                @Override
+                public void onSuccess(Void aVoid) {
+                }
+            });
+        }
         contact.setImage("null.png");
         contactFB.updateContact(contact);
-        imageView.setImageDrawable(getResources().getDrawable(R.drawable.ic_account_black_48dp));
-        imageNull = true;
     }
 
 }

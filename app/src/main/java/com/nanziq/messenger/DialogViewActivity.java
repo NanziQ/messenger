@@ -76,7 +76,6 @@ public class DialogViewActivity extends AppCompatActivity {
                                 .with(getApplicationContext())
                                 .using(new FirebaseImageLoader())
                                 .load(storageReference.child("images/" + databaseUser.getImage()))
-                                .placeholder(R.drawable.ic_account_black_48dp)
                                 .into(viewHolder.binding.messageImage);
                     }
 
