@@ -13,6 +13,7 @@ import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ImageView;
@@ -33,6 +34,7 @@ import com.nanziq.messenger.Firebase.ContactFB;
 import com.nanziq.messenger.Model.Contact;
 import com.nanziq.messenger.R;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.lang.reflect.Array;
@@ -51,6 +53,7 @@ public class EditImageActivity extends AppCompatActivity {
     private ImageView imageView;
     private StorageReference storageReference;
     private String imageName;
+    private boolean imageNull = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -86,6 +89,7 @@ public class EditImageActivity extends AppCompatActivity {
                         startActivityForResult(cameraIntent, CAMERA_RESULT);
                         break;
                     case 2:
+                        deleteImage();
                         break;
                     default:
                         break;
@@ -98,6 +102,7 @@ public class EditImageActivity extends AppCompatActivity {
                 .with(getApplicationContext())
                 .using(new FirebaseImageLoader())
                 .load(storageReference.child("images/" + contact.getImage()))
+                .placeholder(R.drawable.ic_account_black_48dp)
                 .into(imageView);
     }
 
@@ -117,7 +122,9 @@ public class EditImageActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()){
             case R.id.checkMark:
-                uploadImage(imageView);
+                if (!imageNull) {
+                    uploadImage(imageView);
+                }
                 finish();
                 break;
             default:
@@ -141,6 +148,7 @@ public class EditImageActivity extends AppCompatActivity {
         }else if (requestCode == CAMERA_RESULT) {
             Bitmap bitmap = (Bitmap) data.getExtras().get("data");
             imageView.setImageBitmap(bitmap);
+            imageNull = false;
         }
     }
 
@@ -151,6 +159,11 @@ public class EditImageActivity extends AppCompatActivity {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
         byte[] data = baos.toByteArray();
+
+        Bitmap decoded = BitmapFactory.decodeStream(new ByteArrayInputStream(data));
+
+        Log.e("Original   dimensions", bitmap.getWidth()+" "+bitmap.getHeight());
+        Log.e("Compressed dimensions", decoded.getWidth()+" "+decoded.getHeight());
 
         UploadTask uploadTask = storageReference.child("images/" + imageName).putBytes(data);
         uploadTask.addOnFailureListener(new OnFailureListener() {
@@ -168,17 +181,16 @@ public class EditImageActivity extends AppCompatActivity {
         });
     }
 
-    @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        Bitmap bitmap = ((BitmapDrawable)imageView.getDrawable()).getBitmap();
-        outState.putParcelable("imageView",bitmap);
-
+    private void deleteImage(){
+        storageReference.child("images/" + contact.getImage()).delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void aVoid) {
+            }
+        });
+        contact.setImage("null.png");
+        contactFB.updateContact(contact);
+        imageView.setImageDrawable(getResources().getDrawable(R.drawable.ic_account_black_48dp));
+        imageNull = true;
     }
 
-    @Override
-    protected void onRestoreInstanceState(Bundle savedInstanceState) {
-        super.onRestoreInstanceState(savedInstanceState);
-        imageView.setImageBitmap((Bitmap)savedInstanceState.get("imageView"));
-    }
 }

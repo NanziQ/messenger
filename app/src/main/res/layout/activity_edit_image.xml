@@ -16,16 +16,22 @@
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
-            <ImageView
-                android:id="@+id/editImage.image"
+            <RelativeLayout
+                android:id="@+id/editimage_layout"
                 android:layout_width="match_parent"
                 android:layout_height="250dp"
-                android:padding="12dp"/>
+                android:padding="12dp">
+                <ImageView
+                    android:id="@+id/editImage.image"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"/>
+                </RelativeLayout>
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/recycler_view"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/editImage.image"/>
+                android:layout_below="@+id/editimage_layout"/>
         </RelativeLayout>
     </ScrollView>
 

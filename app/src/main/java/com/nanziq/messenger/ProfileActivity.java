@@ -112,6 +112,7 @@ public class ProfileActivity extends AppCompatActivity {
                     .with(getApplicationContext())
                     .using(new FirebaseImageLoader())
                     .load(storageReference.child("images/" + contact.getImage()))
+                    .placeholder(R.drawable.ic_account_black_48dp)
                     .into(imageView);
         }
     }
