@@ -12,10 +12,13 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
+import com.firebase.ui.storage.images.FirebaseImageLoader;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 import com.nanziq.messenger.Adapters.ContactsAdapter;
 import com.nanziq.messenger.Firebase.ContactFB;
 import com.nanziq.messenger.Firebase.DialogFB;
@@ -36,6 +39,7 @@ public class ContactsActivity extends AppCompatActivity {
     private ContactFB contactFB;
     private FirebaseAuth firebaseAuth;
     private FirebaseUser firebaseUser;
+    private StorageReference storageReference;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,6 +52,7 @@ public class ContactsActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
 
+        storageReference = FirebaseStorage.getInstance().getReference();
         dialogFB = DialogFB.getInstance();
         contactFB = ContactFB.getInstance();
         firebaseAuth = FirebaseAuth.getInstance();
@@ -64,8 +69,11 @@ public class ContactsActivity extends AppCompatActivity {
                         viewHolder.binding.setContact(model);
                         Glide
                                 .with(getApplicationContext())
-                                .load(model.getImage())
+                                .using(new FirebaseImageLoader())
+                                .load(storageReference.child("images/" + model.getImage()))
+                                .placeholder(R.drawable.ic_account_black_48dp)
                                 .into(viewHolder.binding.imageView);
+
                     }
 
                     @Override

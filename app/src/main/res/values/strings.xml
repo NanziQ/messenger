@@ -32,6 +32,7 @@
     <string name="dialogs">Диалоги</string>
     <string name="profile">Профиль</string>
     <string name="photo">Фото</string>
+    <string name="enterText">Введите текст</string>
 
     <string-array name="profile_strings">
         <item>Заменить фотографию</item>

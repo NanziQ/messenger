@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
@@ -37,7 +38,7 @@ public class DialogViewActivity extends AppCompatActivity {
     private MessageFB messageFB;
     private ContactFB contactFB;
     private EditText enterText;
-    private Button buttonSend;
+    private ImageButton buttonSend;
     private StorageReference storageReference;
     private Contact databaseUser;
     @Override
@@ -52,7 +53,7 @@ public class DialogViewActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
         enterText = (EditText) findViewById(R.id.enterText);
-        buttonSend = (Button) findViewById(R.id.buttonSend);
+        buttonSend = (ImageButton) findViewById(R.id.buttonSend);
         messageFB = MessageFB.getInstance();
         contactFB = ContactFB.getInstance();
         firebaseAuth = FirebaseAuth.getInstance();
