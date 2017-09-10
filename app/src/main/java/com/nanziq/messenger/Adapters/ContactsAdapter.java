@@ -9,7 +9,10 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.bumptech.glide.Glide;
+import com.firebase.ui.storage.images.FirebaseImageLoader;
 import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 import com.nanziq.messenger.Model.Contact;
 import com.nanziq.messenger.Model.Dialog;
 import com.nanziq.messenger.R;
@@ -25,10 +28,12 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.ViewHo
     List<Contact> contactList;
     private Context context;
     private ContactsAdapter.Listener listener;
+    private StorageReference storageReference;
 
     public ContactsAdapter(List<Contact> contactList, Context context){
         this.contactList = contactList;
         this.context = context;
+        storageReference = FirebaseStorage.getInstance().getReference();
     }
 
     public interface Listener{
@@ -68,19 +73,20 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.ViewHo
     }
 
     @Override
-    public void onBindViewHolder(ContactsAdapter.ViewHolder holder, final int position) {
+    public void onBindViewHolder(final ContactsAdapter.ViewHolder holder, int position) {
         Contact contact = contactList.get(position);
         holder.binding.setContact(contact);
         holder.binding.executePendingBindings();
         Glide
                 .with(context)
-                .load(contact.getImage())
+                .using(new FirebaseImageLoader())
+                .load(storageReference.child("images/" + contact.getImage()))
                 .into(holder.binding.imageView);
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if(listener !=null){
-                    listener.onClick(position);
+                    listener.onClick(holder.getAdapterPosition());
                 }
             }
         });

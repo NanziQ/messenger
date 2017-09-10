@@ -46,10 +46,14 @@
             android:name=".Profile.EditNameActivity"
             android:label="@string/name"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".Profile.EditImageActivity"
+        <activity
+            android:name=".Profile.EditImageActivity"
+            android:configChanges="orientation|screenSize"
             android:label="@string/photo"
-            android:theme="@style/AppTheme.NoActionBar"
-            android:configChanges="orientation|screenSize"/>
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity android:name=".CreateDialogActivity"
+            android:label="@string/create_dialog"
+            android:theme="@style/AppTheme.NoActionBar"/>
     </application>
 
 </manifest>

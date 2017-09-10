@@ -1,5 +1,6 @@
 package com.nanziq.messenger;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -81,7 +82,6 @@ public class MessagesActivity extends AppCompatActivity
         firebaseUser = firebaseAuth.getCurrentUser();
         if(firebaseUser == null){
             startActivity(new Intent(this, SignInActivity.class));
-            finish();
             return;
         }
 
@@ -90,8 +90,7 @@ public class MessagesActivity extends AppCompatActivity
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+               startActivity(new Intent(getApplicationContext(), CreateDialogActivity.class));
             }
         });
 

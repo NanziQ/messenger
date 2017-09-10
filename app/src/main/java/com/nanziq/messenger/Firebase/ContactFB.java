@@ -7,6 +7,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.nanziq.messenger.Model.Contact;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -129,5 +130,17 @@ public class ContactFB {
         contact.setPhone((String) map.get("phone"));
         contact.setImage((String) map.get("image"));
         return contact;
+    }
+
+    public List<Contact> getContactList(){
+        List<Contact> contactList = new ArrayList<>();
+        if (contactMap != null) {
+            for (Map.Entry<String, Object> entry : contactMap.entrySet()) {
+                Map map = (Map) entry.getValue();
+                contactList.add(convertMapToContact(map));
+            }
+            return contactList;
+        }
+        return null;
     }
 }
