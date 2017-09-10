@@ -76,7 +76,7 @@ public class DialogViewActivity extends AppCompatActivity {
                         Glide
                                 .with(getApplicationContext())
                                 .using(new FirebaseImageLoader())
-                                .load(storageReference.child("images/" + databaseUser.getImage()))
+                                .load(storageReference.child("images/" + contactFB.getContactFromUid(model.getUid()).getImage()))
                                 .into(viewHolder.binding.messageImage);
                     }
 
