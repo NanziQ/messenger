@@ -51,8 +51,12 @@
             android:configChanges="orientation|screenSize"
             android:label="@string/photo"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".CreateDialogActivity"
+        <activity
+            android:name=".CreateDialogActivity"
             android:label="@string/create_dialog"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".EditDialogActivity"
             android:theme="@style/AppTheme.NoActionBar"/>
     </application>
 

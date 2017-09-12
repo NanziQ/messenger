@@ -4,7 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.nanziq.messenger.CreateDialogActivity">
+    tools:context="com.nanziq.messenger.EditDialogActivity">
+
 
     <android.support.design.widget.AppBarLayout
         android:id="@+id/appBarLayout"
@@ -20,24 +21,20 @@
             app:popupTheme="@style/AppTheme.PopupOverlay" />
     </android.support.design.widget.AppBarLayout>
 
-    <android.support.design.widget.TextInputLayout
-        android:id="@+id/input"
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/recycler_view_settings"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="8dp"
-        android:layout_below="@+id/appBarLayout">
-        <android.support.design.widget.TextInputEditText
-            android:id="@+id/textInput"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="@string/enterTitle"/>
-    </android.support.design.widget.TextInputLayout>
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/recycler_view"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_marginBottom="12dp"
         tools:layout_editor_absoluteX="8dp"
         tools:layout_editor_absoluteY="8dp"
-        android:layout_below="@+id/input"/>
-
+        android:layout_below="@+id/appBarLayout"/>
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/recycler_view_members"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        tools:layout_editor_absoluteX="8dp"
+        tools:layout_editor_absoluteY="8dp"
+        android:layout_below="@+id/recycler_view_settings"/>
 </RelativeLayout>

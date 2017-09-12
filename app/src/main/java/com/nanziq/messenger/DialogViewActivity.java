@@ -1,5 +1,6 @@
 package com.nanziq.messenger;
 
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -51,6 +52,14 @@ public class DialogViewActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
+        toolbar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getApplicationContext(), EditDialogActivity.class);
+                intent.putExtra("dialogId", dialogId);
+                startActivity(intent);
+            }
+        });
 
         enterText = (EditText) findViewById(R.id.enterText);
         buttonSend = (ImageButton) findViewById(R.id.buttonSend);
