@@ -47,4 +47,10 @@
         <item>Сделать снимок</item>
         <item>Удалить фото</item>
     </string-array>
+
+    <string-array name="editDialogSettings_strings">
+        <item>Сменить аватарку</item>
+        <item>Сменить имя</item>
+        <item>Уведомления</item>
+    </string-array>
 </resources>

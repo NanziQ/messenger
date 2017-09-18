@@ -10,6 +10,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -58,6 +59,8 @@ import java.util.Map;
 
 public class MessagesActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
+
+    final String LOG_TAG = "myLogs";
     private FirebaseAuth firebaseAuth;
     private FirebaseUser firebaseUser;
     private ContactFB contactFB;
@@ -70,6 +73,7 @@ public class MessagesActivity extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.d(LOG_TAG, "MessagesActivityOnCreate");
         setContentView(R.layout.activity_messages);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);

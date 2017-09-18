@@ -5,13 +5,16 @@ import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.widget.Toast;
 
 import com.nanziq.messenger.Adapters.EditDialogMembersAdapter;
+import com.nanziq.messenger.Adapters.EditDialogSettingsAdapter;
 import com.nanziq.messenger.Firebase.ContactFB;
 import com.nanziq.messenger.Firebase.DialogFB;
 import com.nanziq.messenger.Model.Contact;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class EditDialogActivity extends AppCompatActivity {
@@ -33,6 +36,19 @@ public class EditDialogActivity extends AppCompatActivity {
         contactFB = ContactFB.getInstance();
         dialogId = getIntent().getStringExtra("dialogId");
 
+        recyclerViewSettings = (RecyclerView) findViewById(R.id.recycler_view_settings);
+        recyclerViewSettings.setLayoutManager(new LinearLayoutManager(this));
+        recyclerViewSettings.setHasFixedSize(true);
+        List<String> stringList = Arrays.asList(getResources().getStringArray(R.array.editDialogSettings_strings));
+        EditDialogSettingsAdapter adapterSettings = new EditDialogSettingsAdapter(stringList);
+        adapterSettings.setOnClickListener(new EditDialogSettingsAdapter.Listener() {
+            @Override
+            public void onClick(int position) {
+                Toast.makeText(getApplicationContext(), "123123123", Toast.LENGTH_SHORT).show();
+            }
+        });
+        recyclerViewSettings.setAdapter(adapterSettings);
+
         recyclerViewMembers = (RecyclerView) findViewById(R.id.recycler_view_members);
         recyclerViewMembers.setLayoutManager(new LinearLayoutManager(this));
         recyclerViewMembers.setHasFixedSize(true);
@@ -41,8 +57,8 @@ public class EditDialogActivity extends AppCompatActivity {
         for (String str: contactStringList){
             contactList.add(contactFB.getContactFromUid(str));
         }
-        EditDialogMembersAdapter adapter = new EditDialogMembersAdapter(contactList, this);
-        recyclerViewMembers.setAdapter(adapter);
+        EditDialogMembersAdapter adapterMembers = new EditDialogMembersAdapter(contactList, this);
+        recyclerViewMembers.setAdapter(adapterMembers);
     }
 
     @Override

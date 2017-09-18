@@ -23,11 +23,9 @@ public class DialogFB {
     private static DialogFB instance;
     private DatabaseReference databaseReference;
     private Map<String, Object> dialogMap;
-    private ReadFB readFB;
 
     private DialogFB() {
         databaseReference = FirebaseDatabase.getInstance().getReference();
-        readFB = ReadFB.getInstance();
         databaseReference.child("dialogs").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
