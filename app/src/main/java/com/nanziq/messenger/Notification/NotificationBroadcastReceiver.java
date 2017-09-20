@@ -16,7 +16,6 @@ public class NotificationBroadcastReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         Log.d(LOG_TAG,"BroadcastReceiverOnReceive");
-        Toast.makeText(context.getApplicationContext(), "Работай сука", Toast.LENGTH_SHORT).show();
         context.startService(new Intent(context, NotificationService.class));
     }
 }

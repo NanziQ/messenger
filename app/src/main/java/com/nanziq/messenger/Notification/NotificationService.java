@@ -12,6 +12,7 @@ import android.support.annotation.IntDef;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
+import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -31,12 +32,10 @@ import java.util.concurrent.Executors;
 public class NotificationService extends Service {
     final String LOG_TAG = "myLogs";
     Context context;
-    ExecutorService executorService;
 
     public NotificationService() {
         Log.d(LOG_TAG, "Service");
         context = this;
-        executorService = Executors.newFixedThreadPool(1);
     }
 
     @Override
@@ -49,8 +48,14 @@ public class NotificationService extends Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
         Log.d(LOG_TAG, "ServiceOnStartCommand");
         NotificationRunnable runnable = new NotificationRunnable(context);
-        executorService.execute(runnable);
-        return super.onStartCommand(intent, flags, startId);
+        new Thread(runnable).start();
+        return START_STICKY;
+    }
+
+    @Override
+    public void onDestroy() {
+        Log.d(LOG_TAG, "ServiceDestroy");
+        sendBroadcast(new Intent(this, NotificationBroadcastReceiver.class));
     }
 
     private class NotificationRunnable implements Runnable {
@@ -60,8 +65,9 @@ public class NotificationService extends Service {
         private NotificationManager notificationManager;
         private Context context;
 
-        private DialogFB dialogFB = DialogFB.getInstance();
-        private String currentUserUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+
+        private DialogFB dialogFB;
+        private String currentUserUid;
         private DatabaseReference databaseReference;
         private List<Dialog> dialogList;
 
@@ -69,39 +75,51 @@ public class NotificationService extends Service {
             notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
             pendingIntent = PendingIntent.getActivity(context, 0, new Intent(), PendingIntent.FLAG_UPDATE_CURRENT);
             this.context = context;
+            FirebaseApp.initializeApp(context);
+            currentUserUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+            dialogFB = DialogFB.getInstance();
 
             databaseReference = FirebaseDatabase.getInstance().getReference();
-            databaseReference.child("dialogs").addValueEventListener(new ValueEventListener() {
-                @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
-                    Log.d(LOG_TAG, "NotificationDataChange");
-                    for (; ; ) {
-                        List<Dialog> dialogListFromBD = dialogFB.getContactDialogList(currentUserUid);
-                        if (dialogListFromBD == null){
-                            try {
-                                Thread.sleep(500);
-                            } catch (InterruptedException e) {
-                                e.printStackTrace();
-                            }
-                        }else if (!dialogList.equals(dialogFB.getContactDialogList(currentUserUid))) {
-                            dialogList = dialogFB.getContactDialogList(currentUserUid);
-                            sendNotification();
-                            break;
-                        }
-                    }
-                }
 
-                @Override
-                public void onCancelled(DatabaseError databaseError) {
-
-                }
-            });
         }
 
 
         @Override
         public void run() {
-            sendNotification();
+            while (true) {
+                try {
+                    Thread.sleep(5000);
+                    sendNotification();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+//            databaseReference.child("dialogs").addValueEventListener(new ValueEventListener() {
+//                @Override
+//                public void onDataChange(DataSnapshot dataSnapshot) {
+//                    Log.d(LOG_TAG, "NotificationDataChange");
+//                    for (; ; ) {
+//                        List<Dialog> dialogListFromBD = dialogFB.getContactDialogList(currentUserUid);
+//                        if (dialogListFromBD == null){
+//                            try {
+//                                Thread.sleep(500);
+//                            } catch (InterruptedException e) {
+//                                e.printStackTrace();
+//                            }
+//                        }else if (!dialogList.equals(dialogListFromBD)) {
+//                            dialogList = dialogListFromBD;
+//                            Log.d(LOG_TAG, "SendMessage");
+//                            sendNotification();
+//                            break;
+//                        }
+//                    }
+//                }
+//
+//                @Override
+//                public void onCancelled(DatabaseError databaseError) {
+//
+//                }
+//            });
         }
 
         void sendNotification() {

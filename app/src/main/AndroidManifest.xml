@@ -65,7 +65,9 @@
         <service
             android:name=".Notification.NotificationService"
             android:enabled="true"
-            android:exported="true"></service>
+            android:exported="true"
+            android:process=":notification"
+            android:stopWithTask="true"/>
 
         <receiver android:enabled="true"
             android:name=".Notification.NotificationBroadcastReceiver">
