@@ -46,6 +46,7 @@ import com.nanziq.messenger.Model.Contact;
 import com.nanziq.messenger.Model.Dialog;
 import com.nanziq.messenger.Model.DialogView;
 import com.nanziq.messenger.Model.Message;
+import com.nanziq.messenger.Notification.NotificationService;
 
 import org.w3c.dom.Text;
 
@@ -74,6 +75,7 @@ public class MessagesActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.d(LOG_TAG, "MessagesActivityOnCreate");
+        sendBroadcast(new Intent("notificationBroadcast"));
         setContentView(R.layout.activity_messages);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);

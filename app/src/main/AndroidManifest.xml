@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    android:installLocation="internalOnly"
-    package="com.nanziq.messenger">
+    package="com.nanziq.messenger"
+    android:installLocation="internalOnly">
 
     <!-- To auto-complete the email text field in the login form with the user's emails -->
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
@@ -67,11 +67,13 @@
             android:enabled="true"
             android:exported="true"
             android:process=":notification"
-            android:stopWithTask="true"/>
+            android:stopWithTask="true" />
 
-        <receiver android:enabled="true"
-            android:name=".Notification.NotificationBroadcastReceiver">
+        <receiver
+            android:name=".Notification.NotificationBroadcastReceiver"
+            android:enabled="true">
             <intent-filter>
+                <action android:name="notificationBroadcast"/>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
                 <action android:name="android.intent.action.QUICKBOOT_POWERON" />
                 <action android:name="com.htc.intent.action.QUICKBOOT_POWERON" />

@@ -1,5 +1,6 @@
 package com.nanziq.messenger.Notification;
 
+import android.app.AlarmManager;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -7,6 +8,7 @@ import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.BitmapFactory;
+import android.os.Build;
 import android.os.IBinder;
 import android.support.annotation.IntDef;
 import android.support.v4.app.NotificationCompat;
@@ -39,6 +41,11 @@ public class NotificationService extends Service {
     }
 
     @Override
+    public void onCreate() {
+        Log.d(LOG_TAG, "ServiceOnCreate");
+    }
+
+    @Override
     public IBinder onBind(Intent intent) {
         Log.d(LOG_TAG, "ServiceOnBind");
         throw new UnsupportedOperationException("Not yet implemented");
@@ -49,13 +56,36 @@ public class NotificationService extends Service {
         Log.d(LOG_TAG, "ServiceOnStartCommand");
         NotificationRunnable runnable = new NotificationRunnable(context);
         new Thread(runnable).start();
+        setAlarm();
         return START_STICKY;
     }
 
     @Override
     public void onDestroy() {
         Log.d(LOG_TAG, "ServiceDestroy");
-        sendBroadcast(new Intent(this, NotificationBroadcastReceiver.class));
+    }
+
+    private void setAlarm(){
+        Log.d(LOG_TAG, "Alarm");
+        int timeInterval = 5000;
+        Intent restartIntent = new Intent("notificationBroadcast");
+        final AlarmManager am = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+        final PendingIntent pi = PendingIntent.getBroadcast(context, timeInterval, restartIntent, 0);
+        am.cancel(pi);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
+        {
+            final AlarmManager.AlarmClockInfo alarmClockInfo = new AlarmManager.AlarmClockInfo(System.currentTimeMillis() + timeInterval, pi);
+            am.setAlarmClock(alarmClockInfo, pi);
+        }
+        else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT)
+            am.setExact(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + timeInterval, pi);
+        else
+            am.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + timeInterval, pi);
+    }
+
+    @Override
+    public void onTaskRemoved(Intent rootIntent) {
+        Log.d(LOG_TAG, "ServiceRemoved");
     }
 
     private class NotificationRunnable implements Runnable {
