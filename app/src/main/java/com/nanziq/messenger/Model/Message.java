@@ -2,6 +2,7 @@ package com.nanziq.messenger.Model;
 
 import com.nanziq.messenger.Firebase.ContactFB;
 
+import java.text.SimpleDateFormat;
 import java.util.Comparator;
 import java.util.Date;
 
@@ -22,7 +23,8 @@ public class Message {
         this.date = date;
     }
 
-    public Message(){}
+    public Message() {
+    }
 
 
     public String getUid() {
@@ -52,14 +54,21 @@ public class Message {
     public static final Comparator<Message> SORT_BY_DATE = new Comparator<Message>() {
         @Override
         public int compare(Message message, Message message1) {
-            return (int)(message.getDate()- message1.getDate());
+            return (int) (message.getDate() - message1.getDate());
         }
     };
-    public String getNameFormat(){
-        if (this.uid == null){
+
+    public String getNameFormatted() {
+        if (this.uid == null) {
             return null;
         } else {
             return contactFB.getContactNameFromUid(this.uid);
         }
+    }
+
+    public String getDateFormatted() {
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("HH.mm");
+        String dateString = simpleDateFormat.format(new Date(date));
+        return dateString;
     }
 }

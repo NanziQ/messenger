@@ -1,6 +1,9 @@
 package com.nanziq.messenger;
 
+import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -85,7 +88,7 @@ public class DialogViewActivity extends AppCompatActivity {
                     protected void populateViewHolder(MessageViewHolder viewHolder, Message model, int position) {
                         viewHolder.binding.setMessage(model);
                         if (model.getUid().equals(firebaseUser.getUid())) {
-                            viewHolder.binding.messageCardView.setBackground(getResources().getDrawable(R.color.colorYourselfUser));
+                            viewHolder.binding.messageCardView.setCardBackgroundColor(ContextCompat.getColor(getApplicationContext(), R.color.colorYourselfUser));
                         }
                         Glide
                                 .with(getApplicationContext())
@@ -106,13 +109,13 @@ public class DialogViewActivity extends AppCompatActivity {
                         return viewHolder;
                     }
                 };
-                firebaseRecyclerAdapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
-                    @Override
-                    public void onItemRangeInserted(int positionStart, int itemCount) {
-                        super.onItemRangeInserted(positionStart, itemCount);
-                        recyclerView.scrollToPosition(positionStart);
-                    }
-                });
+        firebaseRecyclerAdapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
+            @Override
+            public void onItemRangeInserted(int positionStart, int itemCount) {
+                super.onItemRangeInserted(positionStart, itemCount);
+                recyclerView.scrollToPosition(positionStart);
+            }
+        });
         recyclerView.setAdapter(firebaseRecyclerAdapter);
 
         buttonSend.setOnClickListener(new View.OnClickListener() {
