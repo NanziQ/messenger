@@ -42,6 +42,7 @@ public class DialogViewActivity extends AppCompatActivity {
     private ImageButton buttonSend;
     private StorageReference storageReference;
     private Contact databaseUser;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -67,10 +68,14 @@ public class DialogViewActivity extends AppCompatActivity {
         contactFB = ContactFB.getInstance();
         firebaseAuth = FirebaseAuth.getInstance();
         firebaseUser = firebaseAuth.getCurrentUser();
-        storageReference  = FirebaseStorage.getInstance().getReference();
+        storageReference = FirebaseStorage.getInstance().getReference();
         databaseUser = contactFB.getContactFromUid(firebaseUser.getUid());
 
         databaseReference = FirebaseDatabase.getInstance().getReference();
+        final LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
+        linearLayoutManager.setStackFromEnd(true);
+        recyclerView.setLayoutManager(linearLayoutManager);
+        recyclerView.setHasFixedSize(true);
         firebaseRecyclerAdapter =
                 new FirebaseRecyclerAdapter<Message, MessageViewHolder>(Message.class,
                         R.layout.cardview_message,
@@ -79,7 +84,7 @@ public class DialogViewActivity extends AppCompatActivity {
                     @Override
                     protected void populateViewHolder(MessageViewHolder viewHolder, Message model, int position) {
                         viewHolder.binding.setMessage(model);
-                        if (model.getUid().equals(firebaseUser.getUid())){
+                        if (model.getUid().equals(firebaseUser.getUid())) {
                             viewHolder.binding.messageCardView.setBackground(getResources().getDrawable(R.color.colorYourselfUser));
                         }
                         Glide
@@ -101,8 +106,13 @@ public class DialogViewActivity extends AppCompatActivity {
                         return viewHolder;
                     }
                 };
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        recyclerView.setHasFixedSize(true);
+                firebaseRecyclerAdapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
+                    @Override
+                    public void onItemRangeInserted(int positionStart, int itemCount) {
+                        super.onItemRangeInserted(positionStart, itemCount);
+                        recyclerView.scrollToPosition(positionStart);
+                    }
+                });
         recyclerView.setAdapter(firebaseRecyclerAdapter);
 
         buttonSend.setOnClickListener(new View.OnClickListener() {
