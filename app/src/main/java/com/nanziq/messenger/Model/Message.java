@@ -2,6 +2,9 @@ package com.nanziq.messenger.Model;
 
 import com.nanziq.messenger.Firebase.ContactFB;
 
+import java.util.Comparator;
+import java.util.Date;
+
 /**
  * Created by Konstantin on 17.08.2017.
  */
@@ -11,13 +14,16 @@ public class Message {
 
     public String uid;
     public String text;
+    public long date;
+
+    public Message(String uid, String text, long date) {
+        this.uid = uid;
+        this.text = text;
+        this.date = date;
+    }
 
     public Message(){}
 
-    public Message(String uid, String text) {
-        this.uid = uid;
-        this.text = text;
-    }
 
     public String getUid() {
         return uid;
@@ -35,6 +41,20 @@ public class Message {
         this.text = text;
     }
 
+    public long getDate() {
+        return date;
+    }
+
+    public void setDate(long date) {
+        this.date = date;
+    }
+
+    public static final Comparator<Message> SORT_BY_DATE = new Comparator<Message>() {
+        @Override
+        public int compare(Message message, Message message1) {
+            return (int)(message.getDate()- message1.getDate());
+        }
+    };
     public String getNameFormat(){
         if (this.uid == null){
             return null;

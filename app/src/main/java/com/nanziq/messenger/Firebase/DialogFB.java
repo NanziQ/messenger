@@ -11,6 +11,8 @@ import com.nanziq.messenger.Model.Message;
 
 import java.sql.Struct;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -23,12 +25,14 @@ public class DialogFB {
     private static DialogFB instance;
     private DatabaseReference databaseReference;
     private Map<String, Object> dialogMap;
+    private List<Dialog> dialogList;
 
     private DialogFB() {
         databaseReference = FirebaseDatabase.getInstance().getReference();
         databaseReference.child("dialogs").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
+                dialogList = getDialogList();
                 dialogMap = (Map<String, Object>) dataSnapshot.getValue();
             }
 
@@ -53,7 +57,51 @@ public class DialogFB {
         return key;
     }
 
-    public List<Dialog> getContactDialogList(final String id) {
+    public Message getContactNewMessageFromUid(String uid) {
+        List<Dialog> contactDialogList = getContactDialogList(uid);
+        List<Dialog> contactDialogListOld = getContactDialogListFromList(uid);
+        if (contactDialogList == null || contactDialogListOld == null || contactDialogList == contactDialogListOld) {
+            return null;
+        } else {
+            for (int i = 0; i < contactDialogList.size(); i++) {
+                if (contactDialogList.get(i) != contactDialogListOld.get(i)) {
+                    List<Message> messages = contactDialogList.get(i).getMessages();
+                    if (messages != null) {
+                        Collections.sort(messages, Message.SORT_BY_DATE);
+                    }
+                    List<Message> messagesOld = contactDialogListOld.get(i).getMessages();
+                    if (messagesOld != null) {
+                        Collections.sort(messagesOld, Message.SORT_BY_DATE);
+                    }
+                    if (messages == null || messagesOld == null || messages.size() == messagesOld.size()) {
+                        continue;
+                    } else {
+                        return messages.get(messages.size() - 1);
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
+    public List<Dialog> getContactDialogListFromList(String uid) {
+        List<Dialog> contactDialogList = new ArrayList<>();
+        if (dialogList != null) {
+            for (Dialog dialog : dialogList) {
+                for (String contact : dialog.getContacts()) {
+                    if (contact.equals(uid)) {
+                        contactDialogList.add(dialog);
+                        break;
+                    }
+                }
+            }
+        } else {
+            return null;
+        }
+        return contactDialogList;
+    }
+
+    public List<Dialog> getContactDialogList(final String uid) {
         final List<Dialog> contactDialogList = new ArrayList<>();
         if (dialogMap != null) {
             for (Map.Entry<String, Object> entry : dialogMap.entrySet()) {
@@ -61,7 +109,7 @@ public class DialogFB {
                 List<String> idList = (List<String>) dialog.get("contacts");
                 if (idList != null) {
                     for (String idContact : idList) {
-                        if (idContact.equals(id)) {
+                        if (idContact.equals(uid)) {
                             contactDialogList.add(convertMapToDialog(dialog, entry.getKey()));
                             break;
                         }
@@ -72,7 +120,6 @@ public class DialogFB {
             return null;
         }
         return contactDialogList;
-
     }
 
     public List<Dialog> getSoloContactDialogList(String id) {
@@ -84,6 +131,19 @@ public class DialogFB {
             }
         }
         return newDialogList;
+    }
+
+    public List<Dialog> getDialogList() {
+        List<Dialog> dialogList = new ArrayList<>();
+        if (dialogMap != null) {
+            for (Map.Entry<String, Object> entry : dialogMap.entrySet()) {
+                Map dialog = (Map) entry.getValue();
+                dialogList.add(convertMapToDialog(dialog, entry.getKey()));
+            }
+        } else {
+            return null;
+        }
+        return dialogList;
     }
 
     private Dialog convertMapToDialog(Map map, String key) {
@@ -102,6 +162,7 @@ public class DialogFB {
         Message message = new Message();
         message.setText((String) map.get("text"));
         message.setUid((String) map.get("uid"));
+        message.setDate((long) map.get("date"));
         return message;
     }
 

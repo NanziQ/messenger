@@ -4,6 +4,8 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.nanziq.messenger.Model.Message;
 
+import java.util.Date;
+
 /**
  * Created by Konstantin on 23.08.2017.
  */
@@ -25,7 +27,7 @@ public class MessageFB {
     }
 
     public void sendMessage(String dialogId, String uid, String text){
-        Message message = new Message(uid, text);
+        Message message = new Message(uid, text, new Date().getTime());
         databaseReference.child("dialogs").child(dialogId).child("messages").push().setValue(message);
     }
 }
