@@ -24,9 +24,11 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.nanziq.messenger.DialogViewActivity;
 import com.nanziq.messenger.Firebase.ContactFB;
 import com.nanziq.messenger.Firebase.DialogFB;
 import com.nanziq.messenger.Model.Dialog;
+import com.nanziq.messenger.Model.DialogView;
 import com.nanziq.messenger.Model.Message;
 import com.nanziq.messenger.R;
 
@@ -164,6 +166,9 @@ public class NotificationService extends Service {
                         } else if (dialogList == null || !dialogList.equals(dialogListFromBD)) {
                             dialogList = dialogListFromBD;
                             Message message = dialogFB.getContactNewMessageFromUid(currentUserUid);
+                            Intent intent = new Intent(getApplicationContext(), DialogViewActivity.class);
+                            intent.putExtra("dialogId", dialogFB.getIdDialogFromNewMesasge());
+                            pendingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
                             if (message != null) {
                                 sendNotification(message);
                             }

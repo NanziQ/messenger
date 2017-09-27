@@ -26,6 +26,7 @@ public class DialogFB {
     private DatabaseReference databaseReference;
     private Map<String, Object> dialogMap;
     private List<Dialog> dialogList;
+    private String dialogId;
 
     private DialogFB() {
         databaseReference = FirebaseDatabase.getInstance().getReference();
@@ -57,6 +58,10 @@ public class DialogFB {
         return key;
     }
 
+    public String getIdDialogFromNewMesasge() {
+        return dialogId;
+    }
+
     public Message getContactNewMessageFromUid(String uid) {
         List<Dialog> contactDialogList = getContactDialogList(uid);
         List<Dialog> contactDialogListOld = getContactDialogListFromList(uid);
@@ -76,6 +81,7 @@ public class DialogFB {
                     if (messages == null || messagesOld == null || messages.size() == messagesOld.size()) {
                         continue;
                     } else {
+                        dialogId = contactDialogList.get(i).getId();
                         return messages.get(messages.size() - 1);
                     }
                 }
