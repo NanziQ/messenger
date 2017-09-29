@@ -132,7 +132,9 @@ public class NotificationService extends Service {
             pendingIntent = PendingIntent.getActivity(context, 0, new Intent(), PendingIntent.FLAG_UPDATE_CURRENT);
             this.context = context;
             FirebaseApp.initializeApp(context);
-            currentUserUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+            if (FirebaseAuth.getInstance().getCurrentUser() != null) {
+                currentUserUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+            }
             dialogFB = DialogFB.getInstance();
             contactFB = ContactFB.getInstance();
 
@@ -167,7 +169,7 @@ public class NotificationService extends Service {
                             dialogList = dialogListFromBD;
                             Message message = dialogFB.getContactNewMessageFromUid(currentUserUid);
                             Intent intent = new Intent(getApplicationContext(), DialogViewActivity.class);
-                            intent.putExtra("dialogId", dialogFB.getIdDialogFromNewMesasge());
+                            intent.putExtra("dialogId", dialogFB.getIdDialogFromNewMessage());
                             pendingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
                             if (message != null) {
                                 sendNotification(message);

@@ -1,8 +1,10 @@
 package com.nanziq.messenger.Model;
 
+import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.nanziq.messenger.Firebase.ContactFB;
+import com.nanziq.messenger.Firebase.DialogFB;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -20,12 +22,15 @@ public class Dialog {
     public List<Message> messages;
     public List<String> contacts;
     public boolean solo;
+    private DialogFB dialogFB;
+    private String currentUid;
+    private Message message;
 
-    public Dialog(){
 
+    public Dialog() {
     }
 
-    public Dialog(String name, String image, String text, List<Message> messages, List<String> contacts, boolean solo){
+    public Dialog(String name, String image, String text, List<Message> messages, List<String> contacts, boolean solo) {
         this.name = name;
         this.image = image;
         this.text = text;
@@ -78,7 +83,7 @@ public class Dialog {
         return solo;
     }
 
-    public void setSolo(boolean solo){
+    public void setSolo(boolean solo) {
         this.solo = solo;
     }
 
@@ -90,14 +95,14 @@ public class Dialog {
         this.id = id;
     }
 
-    public String getDialogNameFormat(){
-        if (!this.solo){
+    public String getDialogNameFormat() {
+        if (!this.solo) {
             return this.name;
         } else {
             ContactFB contactFB = ContactFB.getInstance();
-            if (this.contacts.size()==1){
+            if (this.contacts.size() == 1) {
                 return contactFB.getContactNameFromUid(this.contacts.get(0));
-            }else {
+            } else {
 
                 String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
                 for (String contact : this.contacts) {
@@ -108,5 +113,20 @@ public class Dialog {
             }
         }
         return null;
+    }
+
+    public String getLastMessageFormatted() {
+        dialogFB = DialogFB.getInstance();
+        message = dialogFB.getLastMessageFromDialogId(this.id);
+        String retMes = String.format("%s: %s", message.getNameFormatted(), message.getText());
+        return retMes;
+    }
+
+    public String getDateFromLastMessageFormatted() {
+        dialogFB = DialogFB.getInstance();
+        message = dialogFB.getLastMessageFromDialogId(this.id);
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("HH.mm \ndd.MM ");
+        String dateString = simpleDateFormat.format(new Date(message.getDate()));
+        return dateString;
     }
 }

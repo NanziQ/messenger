@@ -58,7 +58,7 @@ public class DialogFB {
         return key;
     }
 
-    public String getIdDialogFromNewMesasge() {
+    public String getIdDialogFromNewMessage() {
         return dialogId;
     }
 
@@ -88,6 +88,17 @@ public class DialogFB {
             }
         }
         return null;
+    }
+
+    public Message getLastMessageFromDialogId(String dialogId1) {
+        Dialog dialog = getDialog(dialogId1);
+        List<Message> messages = dialog.getMessages();
+        if (messages != null) {
+            Collections.sort(messages, Message.SORT_BY_DATE);
+            return messages.get(messages.size() - 1);
+        } else {
+            return null;
+        }
     }
 
     public List<Dialog> getContactDialogListFromList(String uid) {
