@@ -2,6 +2,7 @@ package com.nanziq.messenger.Adapters;
 
 import android.content.Context;
 import android.databinding.DataBindingUtil;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,6 +16,7 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.nanziq.messenger.Firebase.ContactFB;
 import com.nanziq.messenger.Model.Contact;
+import com.nanziq.messenger.Model.ContactsInDialog;
 import com.nanziq.messenger.Model.Dialog;
 import com.nanziq.messenger.Model.DialogView;
 import com.nanziq.messenger.R;
@@ -28,6 +30,7 @@ import java.util.List;
 
 public class DialogsAdapter extends RecyclerView.Adapter<DialogsAdapter.ViewHolder> {
 
+    String currentUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
     List<Dialog> dialogList;
     Context context;
     private DialogsAdapter.Listener listener;
@@ -88,6 +91,16 @@ public class DialogsAdapter extends RecyclerView.Adapter<DialogsAdapter.ViewHold
         Dialog dialog = dialogList.get(position);
         holder.binding.setDialog(dialog);
         holder.binding.executePendingBindings();
+        long countUnreadMessage = 0;
+        for (ContactsInDialog contactsInDialog : dialog.getContacts()) {
+            if (contactsInDialog.getUid().equals(currentUid)) {
+                countUnreadMessage = contactsInDialog.getCountUnreadMessage();
+                break;
+            }
+        }
+        if (countUnreadMessage != 0) {
+            holder.binding.relativeLayout.setBackgroundColor(ContextCompat.getColor(context, R.color.colorYourselfUser));
+        }
         if (!dialog.getSolo()) {
             Glide
                     .with(context)
@@ -97,11 +110,11 @@ public class DialogsAdapter extends RecyclerView.Adapter<DialogsAdapter.ViewHold
         } else {
             Contact contact = null;
             if (dialog.getContacts().size() == 1) {
-                contact = contactFB.getContactFromUid(dialog.getContacts().get(0));
+                contact = contactFB.getContactFromUid(dialog.getContacts().get(0).getUid());
             } else {
-                for (String contactUid : dialog.getContacts()) {
-                    if (!contactUid.equals(FirebaseAuth.getInstance().getCurrentUser().getUid())) {
-                        contact = contactFB.getContactFromUid(contactUid);
+                for (ContactsInDialog contactUid : dialog.getContacts()) {
+                    if (!contactUid.getUid().equals(FirebaseAuth.getInstance().getCurrentUser().getUid())) {
+                        contact = contactFB.getContactFromUid(contactUid.getUid());
                         break;
                     }
                 }

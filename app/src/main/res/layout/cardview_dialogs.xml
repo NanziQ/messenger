@@ -9,6 +9,7 @@
     </data>
 
     <RelativeLayout
+        android:id="@+id/relativeLayout"
         android:layout_height="@dimen/cardview_height"
         android:layout_width="match_parent">
 

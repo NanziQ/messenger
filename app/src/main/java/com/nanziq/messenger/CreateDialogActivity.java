@@ -15,6 +15,7 @@ import com.nanziq.messenger.Adapters.CreateDialogAdapter;
 import com.nanziq.messenger.Firebase.ContactFB;
 import com.nanziq.messenger.Firebase.DialogFB;
 import com.nanziq.messenger.Model.Contact;
+import com.nanziq.messenger.Model.ContactsInDialog;
 import com.nanziq.messenger.Model.Dialog;
 
 import java.util.ArrayList;
@@ -87,16 +88,19 @@ public class CreateDialogActivity extends AppCompatActivity {
     }
 
     private void createDialog() {
-        List<String> listUid = new ArrayList<>();
+        List<ContactsInDialog> listUid = new ArrayList<>();
+        ContactsInDialog contactsInDialog = new ContactsInDialog();
         boolean[] check = adapter.getItemSelect();
-        listUid.add(firebaseUser.getUid());
+        contactsInDialog.setUid(firebaseUser.getUid());
+        listUid.add(contactsInDialog);
         int i = 0;
         for (Contact contact : contactList) {
             if (check[i]) {
-                listUid.add(contact.getUid());
+                contactsInDialog.setUid(contact.getUid());
+                listUid.add(contactsInDialog);
             }
             i++;
         }
-        dialogFB.createNewDialog(textInputEditText.getText().toString(), null, null, null, listUid, false);
+        dialogFB.createNewDialog(textInputEditText.getText().toString(), listUid, false);
     }
 }

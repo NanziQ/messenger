@@ -23,6 +23,7 @@ import com.nanziq.messenger.Adapters.ContactsAdapter;
 import com.nanziq.messenger.Firebase.ContactFB;
 import com.nanziq.messenger.Firebase.DialogFB;
 import com.nanziq.messenger.Model.Contact;
+import com.nanziq.messenger.Model.ContactsInDialog;
 import com.nanziq.messenger.Model.Dialog;
 import com.nanziq.messenger.Model.Message;
 
@@ -89,11 +90,13 @@ public class ContactsActivity extends AppCompatActivity {
                                 boolean checkDialog = false;
                                 String key = "";
 
-                                if (!firebaseUser.getUid().equals(friendUid)) {
+                                String userUid = firebaseUser.getUid();
+
+                                if (!userUid.equals(friendUid)) {
                                     for (Dialog item : currentUserSoloDialogList) {
-                                        List<String> contacts = item.getContacts();
-                                        for (String id : contacts) {
-                                            if (friendUid.equals(id)) {
+                                        List<ContactsInDialog> contacts = item.getContacts();
+                                        for (ContactsInDialog id : contacts) {
+                                            if (friendUid.equals(id.getUid())) {
                                                 checkDialog = true;
                                                 key = item.getId();
                                                 break;
@@ -102,8 +105,8 @@ public class ContactsActivity extends AppCompatActivity {
                                     }
                                 } else {
                                     for (Dialog item : currentUserSoloDialogList) {
-                                        List<String> contacts = item.getContacts();
-                                        if (contacts.size() == 1 && contacts.get(0).equals(firebaseUser.getUid())){
+                                        List<ContactsInDialog> contacts = item.getContacts();
+                                        if (contacts.size() == 1 && contacts.get(0).getUid().equals(userUid)){
                                             checkDialog = true;
                                             key = item.getId();
                                             break;
@@ -115,12 +118,16 @@ public class ContactsActivity extends AppCompatActivity {
                                     intent.putExtra("dialogId", key);
                                     startActivity(intent);
                                 }else {
-                                    List<String> contactsId = new ArrayList<>();
-                                    contactsId.add(firebaseUser.getUid());
-                                    if (!firebaseUser.getUid().equals(friendUid)) {
-                                        contactsId.add(friendUid);
+                                    List<ContactsInDialog> contactsId = new ArrayList<>();
+                                    ContactsInDialog contactsInDialog = new ContactsInDialog();
+                                    contactsInDialog.setUid(userUid);
+                                    contactsId.add(contactsInDialog);
+                                    if (!userUid.equals(friendUid)) {
+                                        ContactsInDialog contactsInDialog1 = new ContactsInDialog();
+                                        contactsInDialog1.setUid(friendUid);
+                                        contactsId.add(contactsInDialog1);
                                     }
-                                    key = dialogFB.createNewDialog("Dialog" + position, null, null, null, contactsId, true);
+                                    key = dialogFB.createNewDialog("Dialog" + position, contactsId, true);
                                     Intent intent = new Intent(getApplicationContext(), DialogViewActivity.class);
                                     intent.putExtra("dialogId", key);
                                     startActivity(intent);

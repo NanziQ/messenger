@@ -13,9 +13,9 @@ import java.util.Date;
 public class Message {
     private ContactFB contactFB = ContactFB.getInstance();
 
-    public String uid;
-    public String text;
-    public long date;
+    private String uid;
+    private String text;
+    private long date;
 
     public Message(String uid, String text, long date) {
         this.uid = uid;

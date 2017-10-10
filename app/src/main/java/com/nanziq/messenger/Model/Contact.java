@@ -7,10 +7,10 @@ import java.util.List;
  */
 
 public class Contact {
-    public String uid;
-    public String name;
-    public String phone;
-    public String image;
+    private String uid;
+    private String name;
+    private String phone;
+    private String image;
 
     public Contact(){
 

@@ -12,6 +12,7 @@ import com.nanziq.messenger.Adapters.EditDialogSettingsAdapter;
 import com.nanziq.messenger.Firebase.ContactFB;
 import com.nanziq.messenger.Firebase.DialogFB;
 import com.nanziq.messenger.Model.Contact;
+import com.nanziq.messenger.Model.ContactsInDialog;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -52,10 +53,10 @@ public class EditDialogActivity extends AppCompatActivity {
         recyclerViewMembers = (RecyclerView) findViewById(R.id.recycler_view_members);
         recyclerViewMembers.setLayoutManager(new LinearLayoutManager(this));
         recyclerViewMembers.setHasFixedSize(true);
-        List<String> contactStringList = dialogFB.getDialog(dialogId).getContacts();
+        List<ContactsInDialog> contactStringList = dialogFB.getDialog(dialogId).getContacts();
         List<Contact> contactList = new ArrayList<>();
-        for (String str: contactStringList){
-            contactList.add(contactFB.getContactFromUid(str));
+        for (ContactsInDialog str: contactStringList){
+            contactList.add(contactFB.getContactFromUid(str.getUid()));
         }
         EditDialogMembersAdapter adapterMembers = new EditDialogMembersAdapter(contactList, this);
         recyclerViewMembers.setAdapter(adapterMembers);

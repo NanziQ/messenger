@@ -5,9 +5,9 @@ package com.nanziq.messenger.Model;
  */
 
 public class DialogView {
-    public String name;
-    public String image;
-    public String text;
+    private String name;
+    private String image;
+    private String text;
 
     public DialogView(){}
 

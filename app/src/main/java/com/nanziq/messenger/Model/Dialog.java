@@ -15,22 +15,22 @@ import java.util.List;
  */
 
 public class Dialog {
-    public String id;
-    public String name;
-    public String image;
-    public String text;
-    public List<Message> messages;
-    public List<String> contacts;
-    public boolean solo;
+    private String id;
+    private String name;
+    private String image;
+    private String text;
+    private List<Message> messages;
+    private List<ContactsInDialog> contacts;
+    private boolean solo;
+
     private DialogFB dialogFB;
-    private String currentUid;
     private Message message;
 
 
     public Dialog() {
     }
 
-    public Dialog(String name, String image, String text, List<Message> messages, List<String> contacts, boolean solo) {
+    public Dialog(String name, String image, String text, List<Message> messages, List<ContactsInDialog> contacts, boolean solo) {
         this.name = name;
         this.image = image;
         this.text = text;
@@ -71,11 +71,11 @@ public class Dialog {
         this.messages = messages;
     }
 
-    public List<String> getContacts() {
+    public List<ContactsInDialog> getContacts() {
         return contacts;
     }
 
-    public void setContacts(List<String> contacts) {
+    public void setContacts(List<ContactsInDialog> contacts) {
         this.contacts = contacts;
     }
 
@@ -100,17 +100,22 @@ public class Dialog {
             return this.name;
         } else {
             ContactFB contactFB = ContactFB.getInstance();
-            if (this.contacts.size() == 1) {
-                return contactFB.getContactNameFromUid(this.contacts.get(0));
+            if (this.contacts == null) {
+                return null;
             } else {
+                if (this.contacts.size() == 1) {
+                    return contactFB.getContactNameFromUid(this.contacts.get(0).getUid());
+                } else {
 
-                String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
-                for (String contact : this.contacts) {
-                    if (!contact.equals(uid)) {
-                        return contactFB.getContactNameFromUid(contact);
+                    String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+                    for (ContactsInDialog contact : this.contacts) {
+                        if (!contact.getUid().equals(uid)) {
+                            return contactFB.getContactNameFromUid(contact.getUid());
+                        }
                     }
                 }
             }
+
         }
         return null;
     }
@@ -118,15 +123,23 @@ public class Dialog {
     public String getLastMessageFormatted() {
         dialogFB = DialogFB.getInstance();
         message = dialogFB.getLastMessageFromDialogId(this.id);
-        String retMes = String.format("%s: %s", message.getNameFormatted(), message.getText());
-        return retMes;
+        if (message != null) {
+            String retMes = String.format("%s: %s", message.getNameFormatted(), message.getText());
+            return retMes;
+        } else {
+            return null;
+        }
     }
 
     public String getDateFromLastMessageFormatted() {
         dialogFB = DialogFB.getInstance();
         message = dialogFB.getLastMessageFromDialogId(this.id);
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("HH.mm \ndd.MM ");
-        String dateString = simpleDateFormat.format(new Date(message.getDate()));
-        return dateString;
+        if (message != null) {
+            String dateString = simpleDateFormat.format(new Date(message.getDate()));
+            return dateString;
+        } else {
+            return null;
+        }
     }
 }
