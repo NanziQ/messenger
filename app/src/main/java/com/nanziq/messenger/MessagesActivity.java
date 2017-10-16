@@ -52,6 +52,7 @@ import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -209,10 +210,12 @@ public class MessagesActivity extends AppCompatActivity
                     try {
                         Thread.sleep(250);
                         dialogs = dialogFB1.getContactDialogList(id[0]);
+
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
                 } else {
+                    Collections.sort(dialogs, Dialog.SORT_BY_DATE);
                     adapter = new DialogsAdapter(dialogs, getApplicationContext());
                     return null;
 

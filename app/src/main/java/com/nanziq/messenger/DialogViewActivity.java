@@ -28,8 +28,11 @@ import com.google.firebase.storage.StorageReference;
 import com.nanziq.messenger.Adapters.ContactsAdapter;
 import com.nanziq.messenger.Adapters.MessageViewHolder;
 import com.nanziq.messenger.Firebase.ContactFB;
+import com.nanziq.messenger.Firebase.DialogFB;
 import com.nanziq.messenger.Firebase.MessageFB;
 import com.nanziq.messenger.Model.Contact;
+import com.nanziq.messenger.Model.ContactsInDialog;
+import com.nanziq.messenger.Model.Dialog;
 import com.nanziq.messenger.Model.Message;
 
 public class DialogViewActivity extends AppCompatActivity {
@@ -45,6 +48,7 @@ public class DialogViewActivity extends AppCompatActivity {
     private ImageButton buttonSend;
     private StorageReference storageReference;
     private Contact databaseUser;
+    private DialogFB dialogFB;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,8 +77,21 @@ public class DialogViewActivity extends AppCompatActivity {
         firebaseUser = firebaseAuth.getCurrentUser();
         storageReference = FirebaseStorage.getInstance().getReference();
         databaseUser = contactFB.getContactFromUid(firebaseUser.getUid());
-
+        dialogFB = DialogFB.getInstance();
         databaseReference = FirebaseDatabase.getInstance().getReference();
+
+        Dialog dialog = dialogFB.getDialog(dialogId);
+        databaseReference.child("dialogs").child(dialogId).child("contacts").removeValue();
+        for (ContactsInDialog contact : dialog.getContacts()) {
+            if (contact.getUid().equals(firebaseUser.getUid())) {
+                contact.setCountUnreadMessage(0);
+                databaseReference.child("dialogs").child(dialogId).child("contacts").push().setValue(contact);
+            } else {
+                databaseReference.child("dialogs").child(dialogId).child("contacts").push().setValue(contact);
+            }
+        }
+
+
         final LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
         linearLayoutManager.setStackFromEnd(true);
         recyclerView.setLayoutManager(linearLayoutManager);

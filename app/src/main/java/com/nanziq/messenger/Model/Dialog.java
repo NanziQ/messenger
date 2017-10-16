@@ -1,5 +1,7 @@
 package com.nanziq.messenger.Model;
 
+import android.content.Intent;
+
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -7,6 +9,7 @@ import com.nanziq.messenger.Firebase.ContactFB;
 import com.nanziq.messenger.Firebase.DialogFB;
 
 import java.text.SimpleDateFormat;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
@@ -142,4 +145,19 @@ public class Dialog {
             return null;
         }
     }
+
+    public long getDateFromLastMessage() {
+        dialogFB = DialogFB.getInstance();
+        message = dialogFB.getLastMessageFromDialogId(this.id);
+        return message.getDate();
+
+    }
+
+    public static final Comparator<Dialog> SORT_BY_DATE = new Comparator<Dialog>() {
+        @Override
+        public int compare(Dialog dialog, Dialog dialog1) {
+
+            return (int) (dialog1.getDateFromLastMessage() - dialog.getDateFromLastMessage());
+        }
+    };
 }
